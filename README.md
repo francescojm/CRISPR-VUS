@@ -1,10 +1,11 @@
-# CRISPR-VUS
+# CRISPR-enhanced assessment of variants of unknown significance nominates oncology therapeutic targets and drug repositioning opportunities
 
 ## Overview
 
-This repository contains the analysis workflow for the CRISPR-VUS project.
+This repository contains the analysis workflow for the CRISPR-VUS project, a CRISPR enhanced analytical framework that systematically identifies
+Dependency-Associated Mutations (DAMs): somatic variants linked to increased viability dependency on their hosting gene in cancer cells.
 
-The repository includes a Google Colab notebook and a set of R files. The Colab notebook is the main file used to run the analysis. The R files contain functions that are sourced and used directly inside the notebook.
+The repository includes a Google Colab notebook and a set of R files. The Colab notebook is the main and only file used to run the analysis. The R files contain functions that are sourced and used directly inside the notebook.
 
 ---
 
@@ -16,9 +17,9 @@ To be completed.
 
 Information to add later:
 
-- Data sources.
-- Download links or access instructions.
-- Expected folder structure.
+- Data sources
+- Download link
+- Expected folder structure
 
 ---
 
@@ -70,7 +71,7 @@ crisprVUS_project/
 
 The `files` section lists the external and project-specific input files required by the workflow.
 
-These file names are expected to correspond to files stored inside the data directory structure defined in the `paths` section. The exact retrieval instructions for each dataset will be added in the data retrieval section.
+These file names are expected to correspond to files stored inside the data directory structure defined in the `paths` section.
 
 ### Saved R objects
 
@@ -84,7 +85,7 @@ These objects are expected to be stored in the R-object directory defined by `ro
 
 The notebook contains a set of modifiable analysis parameters. The default values are the values used to ensure reproducibility of the published results.
 
-Users can modify these parameters when running exploratory analyses.
+Users can modify these parameters when running exploratory or other specific analyses.
 
 | Parameter | Default | Description |
 |---|---:|---|
@@ -156,7 +157,7 @@ To be completed.
 
 This section will include the software and package requirements needed to run the notebook and the R scripts.
 
-Information to add later:
+Information to add:
 
 - R version.
 - Required R packages.
