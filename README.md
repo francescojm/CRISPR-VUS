@@ -43,7 +43,7 @@ The Google Colab notebook is the main file used to run the analysis. The R scrip
 
 ## Data retrieval
 
-The data required to run the workflow are provided separately from the GitLab repository.
+The data required to run the workflow are provided separately from this repository.
 
 Download the data archive from Figshare: [insert link]
 
@@ -61,13 +61,13 @@ crispr-vus/
 └── README.md
 ```
 
-The workflow expects the input files to be located inside the data/ directory, following the structure shown above.
+The workflow expects the input files to be located inside the `data/` directory, following the structure shown above.
 
 ---
 
 ## Configuration file
 
-The workflow uses a configuration file, 'config.yaml', to define input paths, output paths, and required file names.
+The workflow uses a configuration file, `config.yaml`, to define input paths, output paths, and required file names.
 
 Before running the notebook, check that the home path in the configuration file points to the main project directory.
 
@@ -137,7 +137,7 @@ The notebook contains parameters that can be modified before running the analysi
 
 ## Running the notebook
 
-Open the Google Colab notebook (CRISPR_VUS.ipynb) and run the notebook sections in order as described below.
+Open the Google Colab notebook (`CRISPR_VUS.ipynb`) and run the notebook sections in order as described below.
 
 ### First complete run
 
