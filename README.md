@@ -11,6 +11,7 @@ The workflow is run through a Google Colab notebook. The repository also contain
 
 The repository contains:
 
+```text
 crispr-vus/
 ├── CRISPR_VUS.ipynb
 ├── config.yaml
@@ -34,6 +35,7 @@ crispr-vus/
 │   ├── 18_patient_summary.r
 │   └── 19_clinical_act.r
 └── README.md
+```
 
 The Google Colab notebook is the main file used to run the analysis. The R scripts are loaded automatically from inside the notebook and should remain in the expected repository structure.
 
@@ -47,6 +49,7 @@ Download the data archive from Figshare: [insert link]
 
 After downloading the archive, unzip it in the root directory of the repository. The folder structure should look like this:
 
+```text
 crispr-vus/
 ├── data/
 │   ├── raw/
@@ -56,6 +59,7 @@ crispr-vus/
 ├── config.yaml
 ├── CRISPR_VUS.ipynb
 └── README.md
+```
 
 The workflow expects the input files to be located inside the data/ directory, following the structure shown above.
 
