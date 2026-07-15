@@ -205,10 +205,4 @@ Information to add:
 
 ## Citation
 
-...
-
-
-
-## Citation
-
-To be added before publication.
+To be added.
