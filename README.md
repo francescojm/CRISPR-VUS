@@ -149,6 +149,8 @@ For the first complete run, execute sections 1 to 8 in order:
 
 These sections set up the analysis, load and preprocess the data, select tissues, run the main DAM analysis, integrate driver information, run drug-response analyses, and generate the intermediate results used by later sections.
 
+Section 5 is computationally intensive and may take a long time to complete. If the Colab session is interrupted, the section can be safely rerun: completed tissues are skipped automatically, the analysis resumes from the first unfinished tissue, and the saved random seed state is restored to preserve reproducibility.
+
 ### Later runs
 
 After sections 1 to 8 have been completed once and the required intermediate results have been generated, sections 9 to 19 can be run individually.
