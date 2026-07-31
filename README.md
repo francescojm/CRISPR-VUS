@@ -15,6 +15,7 @@ The repository contains:
 crispr-vus/
 ├── CRISPR_VUS.ipynb
 ├── config.yaml
+├── sessionInfo.txt
 ├── R/
 │   ├── 2_data_loading.r
 │   ├── 3_preprocessing.r
@@ -51,13 +52,14 @@ After downloading the archive, unzip it in the root directory of the repository.
 
 ```text
 crispr-vus/
+├── CRISPR_VUS.ipynb
+├── config.yaml
+├── sessionInfo.txt
+├── R/
 ├── data/
 │   ├── raw/
 │   └── Robj/
 ├── results/
-├── R/
-├── config.yaml
-├── CRISPR_VUS.ipynb
 └── README.md
 ```
 
