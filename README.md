@@ -13,7 +13,7 @@ The repository contains:
 
 ```text
 crispr-vus/
-├── CRISPR_VUS.ipynb
+├── CRISPR-VUS.ipynb
 ├── config.yaml
 ├── sessionInfo.txt
 ├── R/
@@ -52,7 +52,7 @@ After downloading the archive, unzip it in the root directory of the repository.
 
 ```text
 crispr-vus/
-├── CRISPR_VUS.ipynb
+├── CRISPR-VUS.ipynb
 ├── config.yaml
 ├── sessionInfo.txt
 ├── R/
@@ -139,7 +139,7 @@ The notebook contains parameters that can be modified before running the analysi
 
 ## Running the notebook
 
-Open the Google Colab notebook (`CRISPR_VUS.ipynb`) and run the notebook sections in order as described below.
+Open the Google Colab notebook (`CRISPR-VUS.ipynb`) and run the notebook sections in order as described below.
 
 ### First complete run
 
