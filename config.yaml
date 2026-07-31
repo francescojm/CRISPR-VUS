@@ -1,7 +1,7 @@
 paths:
   home: "/path/to/your/crispr-vus"
   pathdata: "data"
-  resultPath: "results_1tissue"
+  resultPath: "results"
   raw_dir: "raw"
   robj_dir: "Robj"
   CRISPRplots_dir: "_CRISPR_plots"
