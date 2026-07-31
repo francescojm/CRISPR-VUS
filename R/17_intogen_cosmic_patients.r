@@ -14,6 +14,10 @@ create_intogen_counts_aggr <- function(loc_file, allDAMs_Positions) {
                   allDAMs_Positions$chromosome == loc_file$chromosome[x] &
                   allDAMs_Positions$position == loc_file$position[x] &
                   allDAMs_Positions$allele_string == loc_file$allele_string[x])
+
+    if (length(id) == 0) {
+      return(NA_character_)
+    }
     
     # Extract gene name and protein mutation from the matched DAM record
     geneName <- allDAMs_Positions$gene_name[id]
@@ -117,10 +121,12 @@ compute_summary_and_tissue_lists <- function(allDAMs, intogen_counts_aggr, COSMI
   
   # Remove duplicated variants to keep one row per unique event
   ind_remove <- which(duplicated(vars))
-  summary_vars <- summary_vars[-ind_remove, ]
-  rownames(summary_vars) <- vars[-ind_remove]
-  all_tiss_intogen <- all_tiss_intogen[-ind_remove]
-  all_tiss_cosmic <- all_tiss_cosmic[-ind_remove]
+  if (length(ind_remove) > 0) {
+    summary_vars <- summary_vars[-ind_remove, , drop = FALSE]
+    all_tiss_intogen <- all_tiss_intogen[-ind_remove]
+    all_tiss_cosmic <- all_tiss_cosmic[-ind_remove]
+  }
+  rownames(summary_vars) <- unique(vars)
   
   # Replace missing intOGen values with zeros / empty strings
   summary_vars$Num_Intogen[is.na(summary_vars$Num_Intogen)] <- 0
@@ -137,6 +143,10 @@ compute_summary_and_tissue_lists <- function(allDAMs, intogen_counts_aggr, COSMI
 
 # Reformat and sort the aggregated intOGen count matrix for downstream comparison
 finalize_intogen_counts_aggr <- function(intogen_counts_aggr) {
+
+  # Remove entries that did not match any DAM
+  intogen_counts_aggr <- intogen_counts_aggr[!is.na(intogen_counts_aggr$var), , drop = FALSE]
+
   rownames(intogen_counts_aggr) <- str_replace(intogen_counts_aggr$var, "-", " ")
   intogen_counts_aggr <- intogen_counts_aggr[, 1:(ncol(intogen_counts_aggr) - 1)]
   intogen_counts_aggr <- intogen_counts_aggr[order(rowSums(intogen_counts_aggr), decreasing = TRUE), ]
@@ -158,7 +168,7 @@ create_cosmic_counts_aggr <- function(all_tiss_cosmic) {
   )
   
   # Fill the matrix with tissue-specific COSMIC counts
-  for (i in 1:length(all_tiss_cosmic)) {
+  for (i in seq_along(all_tiss_cosmic)) {
     rn <- names(all_tiss_cosmic)[i]
     cnms <- names(all_tiss_cosmic[[i]])
     if (length(cnms) > 0) {

@@ -171,7 +171,7 @@ plot_all_hits_summary <- function(allHits, clc, figuresPath, produce_plots = TRU
   df$fill <- adjustcolor(clc[allHits$ctype, 1], alpha.f = 0.6)
   
   # top 50 hits
-  top_points <- df[order(df$y), ][1:50, ]
+  top_points <- df[order(df$y), ][seq_len(min(50, nrow(df))), ]
 
   # to reduce overlap between labels
   top_points <- top_points[order(top_points$x), ]
@@ -268,7 +268,7 @@ plot_hits_correlations <- function(allDAMs, totalTestedVariants, incl_cl_annot, 
     (ntested_variants_across_ctypes[commoncl]/ncellLines_across_ctypes[commoncl])
 
   # SUPPLEMENTARY FIGURE 3ABC
-  if (produce_plots) {
+  if (produce_plots && length(commoncl) >= 3) {
     pdf(file.path(figuresPath,'nHits_correlations.pdf'),7,7)
     par(mfrow=c(2,2))
 
@@ -332,61 +332,66 @@ plot_hits_correlations <- function(allDAMs, totalTestedVariants, incl_cl_annot, 
 plot_SNR_genomic_groups <- function(percHitsPerCls, clc, figuresPath, produce_plots = TRUE) {
 
   percHitsPerCls <- sort(percHitsPerCls, decreasing = TRUE)
+
+  # define groups 
+  genomicallyQuite <- c(
+    "Acute Myeloid Leukemia",
+    "B-Cell Non-Hodgkin's Lymphoma",
+    "B-Lymphoblastic Leukemia",
+    "Biliary Tract Carcinoma",
+    "Burkitt's Lymphoma",
+    "Chronic Myelogenous Leukemia",
+    "Ewing's Sarcoma",
+    "Mesothelioma",
+    "Neuroblastoma",
+    "Prostate Carcinoma",
+    "Rhabdomyosarcoma",
+    "T-Cell Non-Hodgkin's Lymphoma",
+    "T-Lymphoblastic Leukemia",
+    "Thyroid Gland Carcinoma"
+  )
+
+  genomicallyIntermediate <- c(
+    "Bladder Carcinoma",
+    "Breast Carcinoma",
+    "Cervical Carcinoma",
+    "Esophageal Squamous Cell Carcinoma",
+    "Glioma",
+    "Head and Neck Carcinoma",
+    "Kidney Carcinoma",
+    "Oral Cavity Carcinoma",
+    "Osteosarcoma",
+    "Plasma Cell Myeloma",
+    "Squamous Cell Lung Carcinoma"
+  )
+
+  genomicallyNoisy <- c(
+    "Colorectal Carcinoma",
+    "Endometrial Carcinoma",
+    "Esophageal Carcinoma",
+    "Gastric Carcinoma",
+    "Glioblastoma",
+    "Hepatocellular Carcinoma",
+    "Melanoma",
+    "Non-Small Cell Lung Carcinoma",
+    "Ovarian Carcinoma",
+    "Pancreatic Carcinoma",
+    "Small Cell Lung Carcinoma"
+  )
+
+  # keep only cancer types included in the current analysis
+  genomicallyQuite <- intersect(genomicallyQuite, names(percHitsPerCls))
+  genomicallyIntermediate <- intersect(genomicallyIntermediate, names(percHitsPerCls))
+  genomicallyNoisy <- intersect(genomicallyNoisy, names(percHitsPerCls))
   
-  # FIGURE 2E
   if (produce_plots) {
+    # FIGURE 2E
     pdf(file.path(figuresPath,'SNR_across_ctypes.pdf'),9,7)
 
     par(mar=c(16,4,2,0))
 
     dd <- barplot(percHitsPerCls, col = clc[names(percHitsPerCls),1], las = 2, border = FALSE,
                   ylab = 'Avg % of DAMs per cell line', ylim = c(0,0.9))
-
-    # define groups 
-    genomicallyQuite <- c(
-      "Acute Myeloid Leukemia",
-      "B-Cell Non-Hodgkin's Lymphoma",
-      "B-Lymphoblastic Leukemia",
-      "Biliary Tract Carcinoma",
-      "Burkitt's Lymphoma",
-      "Chronic Myelogenous Leukemia",
-      "Ewing's Sarcoma",
-      "Mesothelioma",
-      "Neuroblastoma",
-      "Prostate Carcinoma",
-      "Rhabdomyosarcoma",
-      "T-Cell Non-Hodgkin's Lymphoma",
-      "T-Lymphoblastic Leukemia",
-      "Thyroid Gland Carcinoma"
-    )
-
-    genomicallyIntermediate <- c(
-      "Bladder Carcinoma",
-      "Breast Carcinoma",
-      "Cervical Carcinoma",
-      "Esophageal Squamous Cell Carcinoma",
-      "Glioma",
-      "Head and Neck Carcinoma",
-      "Kidney Carcinoma",
-      "Oral Cavity Carcinoma",
-      "Osteosarcoma",
-      "Plasma Cell Myeloma",
-      "Squamous Cell Lung Carcinoma"
-    )
-
-    genomicallyNoisy <- c(
-      "Colorectal Carcinoma",
-      "Endometrial Carcinoma",
-      "Esophageal Carcinoma",
-      "Gastric Carcinoma",
-      "Glioblastoma",
-      "Hepatocellular Carcinoma",
-      "Melanoma",
-      "Non-Small Cell Lung Carcinoma",
-      "Ovarian Carcinoma",
-      "Pancreatic Carcinoma",
-      "Small Cell Lung Carcinoma"
-    )
 
     # annotated SNR plot 
     par(xpd = TRUE)
@@ -406,13 +411,15 @@ plot_SNR_genomic_groups <- function(percHitsPerCls, clc, figuresPath, produce_pl
     dev.off()
 
     # boxplot
-    pdf(file.path(figuresPath, 'SNR_t_tests.pdf'), 5, 7)
-    par(mar = c(5, 14, 2, 2))
+    # FIGURE 2F
+    pdf(file.path(figuresPath, 'SNR_t_tests.pdf'), 7, 8)
+    par(mar = c(15, 5, 2, 2))
+    cex.axis = 0.8
 
     boxplot(percHitsPerCls[genomicallyQuite],
             percHitsPerCls[genomicallyIntermediate],
             percHitsPerCls[genomicallyNoisy],
-            names = c(paste('genomically quiet cancers\n(few mutations; driven by fusions or copy number)'),
+            names = c(paste('genomically quiet cancers\n(few mutations; driven by\nfusions or copy number)'),
                       'genomically intermediate cancers',
                       'genomically noisy cancers'),las=2,frame.plot=FALSE)
     dev.off()
@@ -421,25 +428,45 @@ plot_SNR_genomic_groups <- function(percHitsPerCls, clc, figuresPath, produce_pl
   # statistical tests
   cat("\n--- SNR Group Comparisons ---\n")
 
-  cat("\nGenomically quiet vs Noisy t.test\n")
-  print(t.test(percHitsPerCls[genomicallyQuite],
-               percHitsPerCls[genomicallyNoisy]))
+  if (length(genomicallyQuite) >= 2 && length(genomicallyNoisy) >= 2) {
+    cat("\nGenomically quiet vs Noisy t.test\n")
+    print(t.test(
+      percHitsPerCls[genomicallyQuite],
+      percHitsPerCls[genomicallyNoisy]
+    ))
+  }
 
-  cat("\nGenomically quiet + intermediate vs Noisy t.test\n")
-  print(t.test(percHitsPerCls[c(genomicallyQuite, genomicallyIntermediate)],
-               percHitsPerCls[genomicallyNoisy]))
+  if (length(c(genomicallyQuite, genomicallyIntermediate)) >= 2 && length(genomicallyNoisy) >= 2) {
+    cat("\nGenomically quiet + intermediate vs Noisy t.test\n")
+    print(t.test(
+      percHitsPerCls[c(genomicallyQuite, genomicallyIntermediate)],
+      percHitsPerCls[genomicallyNoisy]
+    ))
+  }
 
-  cat("\nGenomically intermediate vs Noisy t.test\n")
-  print(t.test(percHitsPerCls[genomicallyIntermediate],
-               percHitsPerCls[genomicallyNoisy]))
+  if (length(genomicallyIntermediate) >= 2 && length(genomicallyNoisy) >= 2) {
+    cat("\nGenomically intermediate vs Noisy t.test\n")
+    print(t.test(
+      percHitsPerCls[genomicallyIntermediate],
+      percHitsPerCls[genomicallyNoisy]
+    ))
+  }
 
-  cat("\nGenomically quiet vs Intermediate t.test\n")
-  print(t.test(percHitsPerCls[genomicallyQuite],
-               percHitsPerCls[genomicallyIntermediate]))
+  if (length(genomicallyQuite) >= 2 && length(genomicallyIntermediate) >= 2) {
+    cat("\nGenomically quiet vs Intermediate t.test\n")
+    print(t.test(
+      percHitsPerCls[genomicallyQuite],
+      percHitsPerCls[genomicallyIntermediate]
+    ))
+  }
 
-  cat("\nGenomically quiet vs Intermediate + Noisy t.test\n")
-  print(t.test(percHitsPerCls[genomicallyQuite],
-               percHitsPerCls[c(genomicallyIntermediate, genomicallyNoisy)]))
+  if (length(genomicallyQuite) >= 2 && length(c(genomicallyIntermediate, genomicallyNoisy)) >= 2) {
+    cat("\nGenomically quiet vs Intermediate + Noisy t.test\n")
+    print(t.test(
+      percHitsPerCls[genomicallyQuite],
+      percHitsPerCls[c(genomicallyIntermediate, genomicallyNoisy)]
+    ))
+  }
 
   return(invisible(list(
     quiet = genomicallyQuite,
@@ -461,8 +488,8 @@ plot_most_frequent_unreported_DAMbgs <- function(allHits, intogen_drivers, figur
 
   tmp <- mostFreqDAMbgs[which(mostFreqDAMbgs>2)]
   
-  # SUPPLEMENTARY FIGURE 6
-  if (produce_plots) {
+  # SUPPLEMENTARY FIGURE 6A
+  if (produce_plots && length(tmp) > 0) {
     pdf(file.path(figuresPath,'mostFrequentUnreportedDAMbgs.pdf'),12,5)
     barplot(tmp,las=2,border=FALSE,col='orange',
             ylab='Unreported DAMbgs in n cancer type specific analyses',

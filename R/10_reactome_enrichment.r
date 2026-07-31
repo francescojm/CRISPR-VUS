@@ -34,25 +34,25 @@ convert_symbols_to_entrez <- function(symbols, ensembl) {
   return(out) 
 }
 
-# convert_symbols_to_entrez <- function(symbols, ensembl = NULL) {
+convert_symbols_to_entrez2 <- function(symbols, ensembl = NULL) {
 
-#   symbols <- unique(symbols)
-#   symbols <- symbols[!is.na(symbols)]
-#   symbols <- symbols[symbols != ""]
+  symbols <- unique(symbols)
+  symbols <- symbols[!is.na(symbols)]
+  symbols <- symbols[symbols != ""]
 
-#   res <- AnnotationDbi::select(
-#     org.Hs.eg.db::org.Hs.eg.db,
-#     keys = symbols,
-#     keytype = "SYMBOL",
-#     columns = c("ENTREZID")
-#   )
+  res <- AnnotationDbi::select(
+    org.Hs.eg.db::org.Hs.eg.db,
+    keys = symbols,
+    keytype = "SYMBOL",
+    columns = c("ENTREZID")
+  )
 
-#   out <- unique(as.character(res$ENTREZID))
-#   out <- out[!is.na(out)]
-#   out <- out[out != ""]
+  out <- unique(as.character(res$ENTREZID))
+  out <- out[!is.na(out)]
+  out <- out[out != ""]
 
-#   return(out)
-# }
+  return(out)
+}
 
 # Performs Reactome pathway enrichment analysis using enrichPathway.
 run_reactome_enrichment <- function(gene_entrez, universe_entrez, prefix, resultPath, figuresPath, pcut = 0.05, showCategory = 10, produce_plots = TRUE) {
@@ -66,7 +66,7 @@ run_reactome_enrichment <- function(gene_entrez, universe_entrez, prefix, result
 
   # dotplot
   # SUPPLEMENTARY FIGURE 9 
-  if (produce_plots) {
+  if (produce_plots && nrow(as.data.frame(enr)) > 0) {
     pdf(file.path(figuresPath, paste0('REACTOME_enrich_', prefix, 'DAMbearing.pdf')), 
       width = 7, height = 6)
     print(dotplot(enr, showCategory = showCategory))
@@ -87,9 +87,9 @@ compare_enrichments_and_write <- function(all_enr, known_enr, resultPath, figure
   if (produce_plots) {
     pdf(file.path(figuresPath, "REACTOME_allDAMEnrich_vs_knownDAMEnrich.pdf"), 7, 7)
     venn.plot <- draw.pairwise.venn(
-      area1 = length(known_DAM_enrichments$Description),
-      area2 = length(all_DAM_enrichments$Description),
-      cross.area = length(intersect(known_DAM_enrichments$Description, all_DAM_enrichments$Description)),
+      area1 = length(known_enr$Description),
+      area2 = length(all_enr$Description),
+      cross.area = length(intersect(known_enr$Description, all_enr$Description)),
       category = c("kDAMbEnr", "aDAMbEnr"),
       fill = c("purple", "orange"),
       lty = "blank",
@@ -100,45 +100,49 @@ compare_enrichments_and_write <- function(all_enr, known_enr, resultPath, figure
     dev.off()
   }
 
-  conserved <- intersect(rownames(all_DAM_enrichments), rownames(known_DAM_enrichments))
-  newOnly <- setdiff(rownames(all_DAM_enrichments), rownames(known_DAM_enrichments))
+  conserved <- intersect(rownames(all_enr), rownames(known_enr))
+  newOnly <- setdiff(rownames(all_enr), rownames(known_enr))
 
   # table for conserved enrichments: split genes into known/unreported
-  id1 <- match(conserved, all_DAM_enrichments$ID)
-  id2 <- match(conserved, known_DAM_enrichments$ID)
+  if (length(conserved) > 0) {
+    id1 <- match(conserved, all_enr$ID)
+    id2 <- match(conserved, known_enr$ID)
 
-  allG <- strsplit(all_DAM_enrichments[id1, 'geneID'], '/')
-  knownG <- strsplit(known_DAM_enrichments[id2, 'geneID'], '/')
-  unreportedG <- lapply(1:length(allG),function(x){setdiff(allG[[x]],knownG[[x]])})
+    allG <- strsplit(all_enr[id1, 'geneID'], '/')
+    knownG <- strsplit(known_enr[id2, 'geneID'], '/')
+    unreportedG <- lapply(1:length(allG),function(x){setdiff(allG[[x]],knownG[[x]])})
 
-  res <- cbind(all_DAM_enrichments[id1,1:3],
-        unlist(lapply(1:length(knownG),function(x){paste(knownG[[x]],collapse=', ')})),
-        unlist(lapply(1:length(unreportedG),function(x){paste(unreportedG[[x]],collapse=', ')})))
+    res <- cbind(all_enr[id1,1:3],
+          unlist(lapply(1:length(knownG),function(x){paste(knownG[[x]],collapse=', ')})),
+          unlist(lapply(1:length(unreportedG),function(x){paste(unreportedG[[x]],collapse=', ')})))
 
-  colnames(res) <- c('pathway id','id','description','known DAM-bearing genes','unreported DAM-bearing genes')
+    colnames(res) <- c('pathway id','id','description','known DAM-bearing genes','unreported DAM-bearing genes')
 
-  write.table(res,sep='\t',quote=FALSE,
-              file=file.path(resultPath,'_pws_enriched_conserved_in_all_vs_known_DAMbearing_genes.txt'))
+    write.table(res,sep='\t',quote=FALSE,
+                file=file.path(resultPath,'_pws_enriched_conserved_in_all_vs_known_DAMbearing_genes.txt'))
+  }
 
   # table for newOnly pathways with gene breakdown
-  id1 <- match(newOnly, all_DAM_enrichments$ID)
-  id2 <- match(newOnly, known_DAM_enrichments$ID)
+  if (length(newOnly) > 0) {
+    id1 <- match(newOnly, all_enr$ID)
+    id2 <- match(newOnly, known_enr$ID)
 
-  allG <- strsplit(all_DAM_enrichments[id1,'geneID'],'/')
-  knownG <- lapply(1:length(allG),function(x){intersect(allG[[x]], intOGen_drivers)})
-  unreportedG <- lapply(1:length(allG),function(x){setdiff(allG[[x]],knownG[[x]])})
+    allG <- strsplit(all_enr[id1,'geneID'],'/')
+    knownG <- lapply(1:length(allG),function(x){intersect(allG[[x]], intOGen_drivers)})
+    unreportedG <- lapply(1:length(allG),function(x){setdiff(allG[[x]],knownG[[x]])})
 
-  res2 <- cbind(all_DAM_enrichments[id1,1:3],
-               unlist(lapply(1:length(knownG),function(x){paste(knownG[[x]],collapse=', ')})),
-               unlist(lapply(1:length(unreportedG),function(x){paste(unreportedG[[x]],collapse=', ')})))
+    res2 <- cbind(all_enr[id1,1:3],
+                unlist(lapply(1:length(knownG),function(x){paste(knownG[[x]],collapse=', ')})),
+                unlist(lapply(1:length(unreportedG),function(x){paste(unreportedG[[x]],collapse=', ')})))
 
-  colnames(res2) <- c('pathway id','id','description','known DAM-bearing genes','unreported DAM-bearing genes')
+    colnames(res2) <- c('pathway id','id','description','known DAM-bearing genes','unreported DAM-bearing genes')
 
-  write.table(res2,sep='\t',quote=FALSE,file=file.path(resultPath,'_pws_enriched_setDiff_of_enrichments_all_vs_known_DAMbearing_genes.txt'))
+    write.table(res2,sep='\t',quote=FALSE,file=file.path(resultPath,'_pws_enriched_setDiff_of_enrichments_all_vs_known_DAMbearing_genes.txt'))
+  }
 
   # return the two pathway sets invisibly
-  return(invisible(list(known_DAM_enrichments = known_DAM_enrichments,
-                        all_DAM_enrichments = all_DAM_enrichments,
+  return(invisible(list(known_DAM_enrichments = known_enr,
+                        all_DAM_enrichments = all_enr,
                         conserved = conserved,
                         newOnly = newOnly)))
 }
@@ -174,31 +178,31 @@ prepare_background_data <- function(background, intOGen_drivers, ensembl) {
               pathway_to_genes = pathway_to_genes))
 }
 
-# prepare_background_data <- function(background, intOGen_drivers, ensembl = NULL) {
+prepare_background_data2 <- function(background, intOGen_drivers, ensembl = NULL) {
 
-#   all_genes <- keys(org.Hs.eg.db::org.Hs.eg.db, keytype = "ENTREZID")
+  all_genes <- keys(org.Hs.eg.db::org.Hs.eg.db, keytype = "ENTREZID")
 
-#   all_genes <- unique(as.character(all_genes))
-#   all_genes <- all_genes[!is.na(all_genes)]
-#   all_genes <- all_genes[all_genes != ""]
+  all_genes <- unique(as.character(all_genes))
+  all_genes <- all_genes[!is.na(all_genes)]
+  all_genes <- all_genes[all_genes != ""]
 
-#   N <- length(all_genes)
+  N <- length(all_genes)
 
-#   new_background <- setdiff(background, intOGen_drivers)
+  new_background <- setdiff(background, intOGen_drivers)
 
-#   new_background_entrez <- convert_symbols_to_entrez(new_background, ensembl)
+  new_background_entrez <- convert_symbols_to_entrez2(new_background)
 
-#   pathway_to_genes <- as.list(reactome.db::reactomePATHID2EXTID)
+  pathway_to_genes <- as.list(reactome.db::reactomePATHID2EXTID)
 
-#   pathway_to_genes <- lapply(pathway_to_genes, function(x) {unique(as.character(x))})
+  pathway_to_genes <- lapply(pathway_to_genes, function(x) {unique(as.character(x))})
 
-#   return(list(
-#     all_genes = all_genes,
-#     N = N,
-#     new_background_entrez = new_background_entrez,
-#     pathway_to_genes = pathway_to_genes
-#   ))
-# }
+  return(list(
+    all_genes = all_genes,
+    N = N,
+    new_background_entrez = new_background_entrez,
+    pathway_to_genes = pathway_to_genes
+  ))
+}
 
 # Performs permutation-based Reactome enrichment simulation.
 # Randomly samples genes preserving pathway membership proportions,
@@ -321,6 +325,11 @@ run_pathway_enrichment_empirical_tests <- function(cleng_, eleng_, Conserved_pat
 # and generates summary plots.
 run_driver_cooccurrence_analysis <- function(pathway_to_genes, IntOGen_Drivers_entrez, new_DAM_bearing_entrez, all_genes,
     new_gene_symbols, figuresPath, nperm = 1000, produce_plots = TRUE) {
+
+  if (length(new_DAM_bearing_entrez) == 0) {
+    cat("No unreported DAM-bearing genes available for Reactome co-occurrence analysis\n")
+    return(invisible(NULL))
+  }
   
   # identify pathways that contain at least one known driver
   has_driver <- unlist(lapply(pathway_to_genes, function(x){length(intersect(x,IntOGen_Drivers_entrez))>0}))
@@ -346,7 +355,7 @@ run_driver_cooccurrence_analysis <- function(pathway_to_genes, IntOGen_Drivers_e
   observed_p <- my.hypTest(x, k, n, N)
   expectation <- mean(res)
 
-  cat(x, "of the new DAM-bearing genes (",
+  cat(x, " of the new DAM-bearing genes (",
   round(100 * x / k), "%) co-occurred in at least one pathway with known cancer driver gene\n",
   sep = "")
   cat("p =", observed_p, "\n")
@@ -360,10 +369,20 @@ run_driver_cooccurrence_analysis <- function(pathway_to_genes, IntOGen_Drivers_e
         xlab=paste('n. out of ',length(new_gene_symbols),'randomly selected genes (1,000 simulations)'),xlim = range(c(res, x)))
     abline(v=x,col='red')
     dev.off()
+    
+    simulated_log_p <- unlist(lapply(res, function(x) {-log10(my.hypTest(x, k, n, N))}))
+    if (observed_p == 0) {
+      observed_log_p <- max(simulated_log_p, na.rm = TRUE) + 1
+      observed_label <- expression(-log[10](p[observed]) == Inf)
+    } else {
+      observed_log_p <- -log10(observed_p)
+      observed_label <- paste0("observed = ", round(observed_log_p, 2))}
 
     pdf(file.path(figuresPath, "CoOcc_with_known_drivers_in_REACTOME_pathways_pvals.pdf"), 5,3)
-    hist(unlist(lapply(res,function(x){-log10(my.hypTest(x,k,n,N))})),
-        main='empirical p-values across 1,000 simulations',xlab='-log10(p)')
+    hist(simulated_log_p,
+        main='empirical p-values across 1,000 simulations',xlab='-log10(p)',xlim = range(c(simulated_log_p, observed_log_p)))
+    abline(v = observed_log_p, col = "red")
+    text(x = observed_log_p, y = par("usr")[4] * 0.9, labels = observed_label, col = "red", pos = 2, cex = 0.7)
     dev.off()
   }
   
@@ -398,12 +417,12 @@ run_pathway_coverage_analysis <- function(known_DAM_enrichments, all_DAM_enrichm
   
   rownames(Path_increasedCoverage) <- Conserved_paths
   # keeps only pathways where the count increased when going from known to all
-  Path_increasedCoverage <- Path_increasedCoverage[Path_increasedCoverage[,2] - Path_increasedCoverage[,1] > 0, ]
+  Path_increasedCoverage <- Path_increasedCoverage[Path_increasedCoverage[,2] - Path_increasedCoverage[,1] > 0, , drop = FALSE]
   
   # plot 1: all pathways with increased coverage
   # SUPPLEMENTARY FIGURE 10
   oo <- order(Path_increasedCoverage[,2] - Path_increasedCoverage[,1])
-  if (produce_plots) {
+  if (produce_plots && nrow(Path_increasedCoverage) > 0) {
     pdf(file.path(figuresPath, "path_increasedcoverage.pdf"), 10,15)
     par(mar=c(4,26,0,0.5))
     barplot(t(cbind(Path_increasedCoverage[oo,2]-Path_increasedCoverage[oo,1],Path_increasedCoverage[oo,1])),
@@ -415,41 +434,45 @@ run_pathway_coverage_analysis <- function(known_DAM_enrichments, all_DAM_enrichm
   # plot 2: top 10 pathways by increased coverage
   # FIGURE 3D
   oo <- order(Path_increasedCoverage[,2]-Path_increasedCoverage[,1],decreasing = TRUE)
-  if (produce_plots) {
+  if (produce_plots && nrow(Path_increasedCoverage) > 0) {
+    top_n <- min(10, length(oo))
+    top_idx <- rev(oo[seq_len(top_n)])
     pdf(file.path(figuresPath, "path_increasedcoverage_top10.pdf"),10,4)
     par(mar=c(4,10,0,0.5))
-    barplot(t(cbind(Path_increasedCoverage[oo[seq(10,1,-1)],1],
-                    Path_increasedCoverage[oo[seq(10,1,-1)],2]-Path_increasedCoverage[oo[seq(10,1,-1)],1])),
+    barplot(t(cbind(Path_increasedCoverage[top_idx, 1],
+                    Path_increasedCoverage[top_idx, 2] - Path_increasedCoverage[top_idx, 1])),
             beside = FALSE,horiz = TRUE,las=2,xlab='n. genes',xlim=c(0,75),cex.names=0.5,border=FALSE,
             col=c('purple','orange'))
     dev.off()
   }
-
+  
   # compute gene composition for “newOnly” pathways
-  res <- do.call(rbind,lapply(1:length(newOnly),function(x) {
-    pathToEntrez <- suppressMessages(AnnotationDbi::select(reactome.db,
-                        keys = newOnly[x],
-                        keytype = "PATHID",
-                        columns = c("ENTREZID")))
+  if (length(newOnly) > 0) {
+    res <- do.call(rbind,lapply(1:length(newOnly),function(x) {
+      pathToEntrez <- suppressMessages(AnnotationDbi::select(reactome.db,
+                          keys = newOnly[x],
+                          keytype = "PATHID",
+                          columns = c("ENTREZID")))
 
-    knownG <- length(intersect(known_DAM_bearing_entrez,pathToEntrez$ENTREZID))
-    newG <- length(intersect(new_DAM_bearing_entrez,pathToEntrez$ENTREZID))
-    return(c(knownG,newG))
-    }))
+      knownG <- length(intersect(known_DAM_bearing_entrez,pathToEntrez$ENTREZID))
+      newG <- length(intersect(new_DAM_bearing_entrez,pathToEntrez$ENTREZID))
+      return(c(knownG,newG))
+      }))
 
-  rownames(res) <- all_DAM_enrichments[match(newOnly,all_DAM_enrichments$ID),'Description']
+    rownames(res) <- all_DAM_enrichments[match(newOnly,all_DAM_enrichments$ID),'Description']
 
-  oo <- order(res[,2])
+    oo <- order(res[,2])
 
-  # plot 3: “NewOnly” pathway gene counts
-  # FIGURE 3J
-  if (produce_plots) {
-    pdf(file.path(figuresPath, "path_increasedcoverage_NewOnly.pdf"),10,4)
-    par(mar=c(4,10,0,0.5))
-    barplot(t(res[oo,]),
-            beside = FALSE,horiz = TRUE,las=2,xlab='n. genes',xlim=c(0,60),cex.names=0.5,border=FALSE,
-            col=c('purple','orange'))
-    dev.off()
+    # plot 3: “NewOnly” pathway gene counts
+    # FIGURE 3J
+    if (produce_plots) {
+      pdf(file.path(figuresPath, "path_increasedcoverage_NewOnly.pdf"),10,4)
+      par(mar=c(4,10,0,0.5))
+      barplot(t(res[oo,]),
+              beside = FALSE,horiz = TRUE,las=2,xlab='n. genes',xlim=c(0,60),cex.names=0.5,border=FALSE,
+              col=c('purple','orange'))
+      dev.off()
+    }
   }
   
   return(Path_increasedCoverage)

@@ -50,7 +50,7 @@ annotate_DAM_positions_v2 <- function(cl_vars) {
   # strand via Ensembl 
   ens_ids <- unique(na.omit(ifelse(!is.na(dt$ensembl_gene_id), dt$ensembl_gene_id, dt$gene_id)))
   
-  mart <- useEnsembl(biomart = "genes", dataset = "hsapiens_gene_ensembl")
+  mart <- useEnsembl(biomart = "genes", dataset = "hsapiens_gene_ensembl", mirror = "useast")
   strand_map <- getBM(
     attributes = c("ensembl_gene_id","strand"),
     filters    = "ensembl_gene_id",
@@ -156,7 +156,7 @@ vep_sift_polyphen <- function(df, batch_size  = 50, max_retries = 3, sleep_sec =
       
       # Successful response
       if (code == 200) {
-        ans <- content(res, as = "parsed", type = "application/json")
+        ans <- httr::content(res, as = "parsed", type = "application/json")
         ok  <- rbindlist(lapply(ans, parse_one), fill = TRUE)
         return(list(ok = ok, bad = NULL))
       }
@@ -361,8 +361,10 @@ plot_DAM_VEP_summary <- function(allDAMs_with_scores, figuresPath, driver_genes 
                  "Low impact",
                  "Unknown impact")]
   
+  VEPs[is.na(VEPs)] <- 0
+  
   # SUPPLEMENTARY FIGURE 14 A-B
-  if (produce_plots) {
+  if (produce_plots && sum(VEPs) > 0) {
     pdf(file.path(figuresPath, paste0(prefix, "_VEP_prediction.pdf")), 11, 6)
     pie(VEPs,
         col = c("#800026","#fc4e2a","#feb24c","#ffeda0","grey85"))
@@ -415,7 +417,7 @@ plot_SAM_VEP_summary <- function(allSAMs_with_scores, figuresPath, driver_genes 
   VEPs[is.na(VEPs)] <- 0
   
   # SUPPLEMENTARY FIGURE 14 C-D
-  if (produce_plots) {
+  if (produce_plots && sum(VEPs) > 0) {
     pdf(file.path(figuresPath, paste0(prefix, "_VEP_prediction.pdf")), 11, 6)
     pie(VEPs,
         col = c("#800026","#fc4e2a","#feb24c","#ffeda0","grey85"))

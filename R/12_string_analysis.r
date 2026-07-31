@@ -81,6 +81,15 @@ run_STRING_analysis <- function(allHits, driver_genes, totalTestedVariants, stri
   # Remove known driver genes from the hits
   hits_nodriver <- setdiff(hits, driver_genes)
 
+  if (length(hits_nodriver) == 0) {
+    cat("No non-driver hits available for STRING analysis\n")
+    return(invisible(list(
+      score = NA,
+      empP = NA,
+      scorerand = NULL
+    )))
+  }
+
   # Define background genes excluding driver genes
   all_genes_nodriver <- setdiff(unique(totalTestedVariants$gene_symbol), driver_genes)
   

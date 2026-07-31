@@ -9,8 +9,8 @@ library(openxlsx)
 split_aggregated_by_driver <- function(aggregated_counts_aggr_comp, intogen_drivers_s) {
   gn <- unlist(lapply(str_split(row.names(aggregated_counts_aggr_comp), " "), function(x) { x[1] }))
 
-  count_agg_known <- aggregated_counts_aggr_comp[is.element(gn, intogen_drivers_s), ]
-  count_agg_unreported <- aggregated_counts_aggr_comp[!is.element(gn, intogen_drivers_s), ]
+  count_agg_known <- aggregated_counts_aggr_comp[is.element(gn, intogen_drivers_s), , drop = FALSE]
+  count_agg_unreported <- aggregated_counts_aggr_comp[!is.element(gn, intogen_drivers_s), , drop = FALSE]
 
   return(list(
     gn = gn,
@@ -215,7 +215,7 @@ plot_and_report_patient_observation_pies <- function(allDAMs_with_funcImpact_and
                    allDAMs_with_funcImpact_and_clinical_rel$num_patient_intOGen == 0))
   
   # Plot pie chart for all DAMs
-  # SUPPLEMENTARY FIGURE 15
+  # SUPPLEMENTARY FIGURE 15A
   if (produce_plots) {
     pdf(file.path(figuresPath, "04_in_patients_clinical_rap_of_all_DAMs.pdf"), 7, 5)
     pie(c(nDAMs_in_both_intogen_and_cosmic, nDAMs_in_cosmic_only, nDAMs_in_intogen_only, nDAMs_not_in_patients),
@@ -256,8 +256,8 @@ plot_and_report_patient_observation_pies <- function(allDAMs_with_funcImpact_and
                                           novelOnly$num_patient_intOGen == 0))
   
   # Plotting
-  # SUPPLEMENTARY FIGURE 15
-  if (produce_plots) {
+  # SUPPLEMENTARY FIGURE 15B
+  if (produce_plots && nDAMs > 0) {
     pdf(file.path(figuresPath, "04_in_patients_clinical_rap_of_novel_DAMs.pdf"), 7, 5)
     pie(c(nDAMs_in_both_intogen_and_cosmic, nDAMs_in_cosmic_only, nDAMs_in_intogen_only, nDAMs_not_in_patients),
         main = paste(nDAMs, "cancer-type-specific DAMs"),
@@ -281,8 +281,8 @@ plot_and_report_patient_observation_pies <- function(allDAMs_with_funcImpact_and
   ))
 }
 
-# Print the main counts used in the Fennel / Figure 1D summary
-cat_fennel_figure1D_stats <- function(allDAMs_with_funcImpact_and_clinical_rel, intogen_drivers_s) {
+# Print the main counts used in the Funnel / Figure 1D summary
+cat_funnel_figure1D_stats <- function(allDAMs_with_funcImpact_and_clinical_rel, intogen_drivers_s) {
 
   cat(paste("n cancer type specific DAMs", nrow(allDAMs_with_funcImpact_and_clinical_rel)), "\n")
   cat(paste("of which in unreportd DAMbgs",
@@ -363,11 +363,11 @@ compute_uvar_prevalence_and_outputs <- function(allDAMs_with_SIFT_Polyphen, allD
   uvarPrevalence <- uvarPrevalence[order(uvarPrevalence[, 1], decreasing = TRUE), ]
   
   # Plot the most prevalent known-driver DAMs
-  # SUPPLEMENTARY FIGURE 16
-  if (produce_plots) {
+  # SUPPLEMENTARY FIGURE 16A
+  howmany <- head(which(uvarPrevalence[, 3] > 0), 38)
+  if (produce_plots && length(howmany) > 0) {
     pdf(file.path(figuresPath, "04_Known_DAMs_most_frequently_obser_in_patients.pdf"), 10, 5)
     par(mar = c(8, 4, 2, 2))
-    howmany <- which(uvarPrevalence[, 3] > 0)[1:38]
     barplot(t(cbind(uvarPrevalence[howmany, 2],
                     uvarPrevalence[howmany, 1] - uvarPrevalence[howmany, 2])) + 1,
             las = 2, ylab = "n. mutant patients + 1", col = c("blue", "gray"),
@@ -378,11 +378,11 @@ compute_uvar_prevalence_and_outputs <- function(allDAMs_with_SIFT_Polyphen, allD
   }
   
   # Plot the most prevalent unreported DAMs 
-  # SUPPLEMENTARY FIGURE 16
-  if (produce_plots) {
+  # SUPPLEMENTARY FIGURE 16B
+  howmany <- head(which(uvarPrevalence[, 3] == 0 & uvarPrevalence[, 2] > 0), 50)
+  if (produce_plots && length(howmany) > 0) {
     pdf(file.path(figuresPath, "04_unreported_DAMs_most_frequently_obser_in_patients.pdf"), 15, 8)
     par(mar = c(10, 4, 2, 2))
-    howmany <- which(uvarPrevalence[, 3] == 0 & uvarPrevalence[, 2] > 0)[1:50]
     barplot(t(cbind(uvarPrevalence[howmany, 2],
                     uvarPrevalence[howmany, 1] - uvarPrevalence[howmany, 2])),
             las = 2, ylab = "n. mutant patients + 1", col = c("blue", "gray"),
@@ -436,6 +436,11 @@ polar_rect <- function(theta, w, r0, r1, col, border = NA, nside = 40){
 # The outward bars encode prevalence in patients, while inward bars encode how many
 # cancer-type-specific analyses contributed to that DAM.
 plot_circular_dams <- function(df, figuresPath) {
+
+  if (is.null(df) || nrow(df) == 0) {
+    cat("No variants available for the circular DAM plot\n")
+    return(invisible(NULL))
+  }
 
   # Total number of mutant patients
   Tot <- df$totalPatients

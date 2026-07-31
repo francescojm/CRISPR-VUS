@@ -13,6 +13,12 @@ compute_DAM_oncogenic_cooccurrence <- function(allDAMs, bdep, CMP_annot, cl_vari
   
   # DAM-bearing lines
   DAM_bearing_lines <- unique(unlist(strsplit(allDAMs$ps_cl[-which(allDAMs$GENE %in% driver_genes)], ", ")))
+
+  if (length(DAM_bearing_lines) == 0) {
+    cat("No cell lines with DAMs in unreported DAM-bearing genes\n")
+    return(NULL)
+  }
+
   known_DAM_bearing_lines <- unique(unlist(strsplit(allDAMs$ps_cl[which(allDAMs$GENE %in% driver_genes)], ", ")))
   
   RES <- do.call(rbind, lapply(DAM_bearing_lines, function(l) {
@@ -61,6 +67,11 @@ compute_DAM_oncogenic_cooccurrence <- function(allDAMs, bdep, CMP_annot, cl_vari
 # This function summarizes how often cell lines with DAMs in unreported DAM
 # backgrounds also show evidence of co-occurring oncogenic addiction.
 summarize_cooccurrence <- function(RES, figuresPath, plot_prefix = "unreportedDAMs_oncogenicAddiction", produce_plots = TRUE) {
+
+  if (is.null(RES) || nrow(RES) == 0) {
+    cat("No co-occurrence results available\n")
+    return(NULL)
+  }
   
   # Percentages of missing DAMs in known drivers
   nn1 <- 100*length(which(RES[,5] == ''))/nrow(RES)
@@ -86,7 +97,7 @@ summarize_cooccurrence <- function(RES, figuresPath, plot_prefix = "unreportedDA
   rownames(coc_results) <- tissues
   colnames(coc_results) <- c('co-occurring_oncAdd','other')
   
-  cat(sprintf("Median across cancer types = %.2f\n", median(100 * coc_results[,2] / rowSums(coc_results))))
+  cat(sprintf("Median %% of CCLs lacking co-occurring DAMs in lineage-specific GoF drivers: %.2f%%\n", median(100 * coc_results[,2] / rowSums(coc_results))))
   
   coc_results <- coc_results[order(rowSums(coc_results), decreasing = TRUE), ]
   
@@ -115,7 +126,7 @@ summarize_cooccurrence <- function(RES, figuresPath, plot_prefix = "unreportedDA
   rownames(coc_results) <- tissues
   colnames(coc_results) <- c('co-occurring_oncAdd','other')
 
-  cat(sprintf("Median across cancer types = %.2f\n", median(100 * coc_results[,2] / rowSums(coc_results))))
+  cat(sprintf("Median %% of CCLs lacking mutated and essential lineage-specific GoF drivers: %.2f%%\n", median(100 * coc_results[,2] / rowSums(coc_results))))
   coc_results <- coc_results[order(rowSums(coc_results), decreasing = TRUE), ]
   
   # SUPPLEMENTARY FIGURE 13B

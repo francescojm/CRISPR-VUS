@@ -27,58 +27,6 @@ load_results <- function(home, resultPath) {
   return(list(tissues = tissues, results = results))
 }
 
-# Plot diagnostic distributions of p-values, rank ratios and medFitEff
-# ADJUST IF USED! DEP_THRESHOLD, RR_TH, PRODUCE_PLOTS ...
-# make_diagnostic_distributions <- function(home, resultPath, results, tissues) {
-
-#   # p-distribution 
-#   p <- c()
-#   for (ctiss in tissues) {
-#     p <- c(p, results[[ctiss]]$pval_rand[results[[ctiss]]$rank_ratio < 1.6 & results[[ctiss]]$medFitEff < -0.5])
-#   }
-#   df_p <- data.frame(pvalue = p)
-#   pdf(file.path(home, resultPath, "_figures_source", "p_distribution.pdf"), 6, 4)
-#   print(
-#     ggplot(df_p, aes(x = pvalue)) +
-#       geom_histogram(bins = 100) +
-#       theme_classic() +
-#       geom_vline(xintercept = 0.2, linetype = "dashed", color = "red", size = 0.5)
-#   )
-#   dev.off()
-
-#   # rank ratio distribution
-#   rr <- c()
-#   for (ctiss in tissues) {
-#     rr <- c(rr, results[[ctiss]]$rank_ratio)
-#   }
-#   df_rr <- data.frame(RankRatio = rr)
-#   pdf(file.path(home, resultPath, "_figures_source", "rr_distribution.pdf"), 6, 4)
-#   print(
-#     ggplot(df_rr, aes(x = RankRatio)) +
-#       geom_histogram(bins = 100) +
-#       theme_classic() +
-#       geom_vline(xintercept = 1.6, linetype = "dashed", color = "red", size = 0.5)
-#   )
-#   dev.off()
-
-#   # medFitEff distribution
-#   mfe <- c()
-#   for (ctiss in tissues) {
-#     mfe <- c(mfe, results[[ctiss]]$medFitEff)
-#   }
-#   df_mfe <- data.frame(medFitEff = mfe)
-#   pdf(file.path(home, resultPath, "_figures_source", "medFitEff_distribution.pdf"), 6, 4)
-#   print(
-#     ggplot(df_mfe, aes(x = medFitEff)) +
-#       geom_histogram(bins = 100) +
-#       theme_classic() +
-#       geom_vline(xintercept = -0.5, linetype = "dashed", color = "red", size = 0.5)
-#   )
-#   dev.off()
-
-#   invisible(TRUE)
-# }
-
 # Compute mutational burden per tissue using annotations and variant data
 compute_mut_burden <- function(tissues, CMP_annot, cl_variants) {
 
@@ -239,7 +187,7 @@ plot_driver_hits_venn <- function(figuresPath, driver_genes, hits, produce_plots
   }
 
   perc_int <- length(intersect(hits, driver_genes)) / length(hits)
-  cat("Intersection ", perc_int, "\n", sep = "")
+  cat("Fraction of unique DAM-bearing genes annotated as known IntOGen cancer drivers: ", perc_int, "\n", sep = "")
   return(perc_int)
 }
 
@@ -257,8 +205,9 @@ plot_other_driver_venns_and_tests <- function(benchmark, hits, cl_variants, figu
     b <- length(setdiff(hits, dg1))
     c <- length(setdiff(dg1, hits))
     # Background gene universe
-    d <- length(unique(cl_variants$gene_symbol))  # or gene_symbol_2023 ??
-
+    d <- length(unique(cl_variants$gene_symbol))  
+    
+    cat("Testing enrichment against external benchmark driver lists.")
     cat(as.character(benchmark[1, col]), " ",
         fisher.test(matrix(c(a, b, c, d), ncol = 2), alternative = "greater")$p.value,
         "\n", sep = "")
@@ -346,10 +295,19 @@ plot_driver_heatmap <- function(figuresPath, summary_drivers_bin, selhits2, prod
   toplot <- toplot[order(rowSums(!is.na(toplot)), decreasing = TRUE),
     order(colSums(!is.na(toplot)), decreasing = TRUE), drop = FALSE]
   
-  # SUPPLEMENTARY FIGURE 6 pt.2
-  if (produce_plots) {
+  # SUPPLEMENTARY FIGURE 6B
+  if (produce_plots && length(selhits2) > 0) {
     outfile <- file.path(figuresPath, "Drivers_pheat_novelvsknown.pdf")
-    ph <- pheatmap::pheatmap(toplot, cluster_rows = FALSE, cluster_cols = FALSE, cellwidth = 15, cellheight = 15, na_col = "grey90", silent = TRUE)
+    
+    unique_values <- unique(na.omit(as.vector(toplot)))
+    
+    if (length(unique_values) == 1) {
+      ph <- pheatmap::pheatmap(toplot, cluster_rows = FALSE, cluster_cols = FALSE, cellwidth = 15, cellheight = 15, color = c("#56B4E9", "#0072B2"),
+        breaks = c(-0.5, 0.5, 1.5), na_col = "grey90", silent = TRUE)
+    } else {
+      ph <- pheatmap::pheatmap(toplot, cluster_rows = FALSE, cluster_cols = FALSE, cellwidth = 15, cellheight = 15, na_col = "grey90", silent = TRUE)
+    }
+    
     pdf(outfile, width = 15, height = 15)
     grid::grid.newpage()
     grid::grid.draw(ph$gtable)
@@ -437,7 +395,7 @@ plot_nondriver_ntissues <- function(figuresPath, summary_nodrivers, produce_plot
                    ntissues = sort(rowSums(summary_nodrivers), decreasing = TRUE))
   df$DAMbg <- factor(df$DAMbg, levels = c(names(sort(rowSums(summary_nodrivers), decreasing = TRUE))))
   
-  # SUPPLEMENTARY FIGURE 6 pt.1
+  # SUPPLEMENTARY FIGURE 6A
   if (produce_plots) {
     pdf(file.path(figuresPath, "DAMbgs_unreported_ntiss.pdf"), 12, 4)
     print(

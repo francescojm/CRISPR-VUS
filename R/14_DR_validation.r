@@ -5,6 +5,11 @@ library(stringr)
 # Expands rows where a hit contains multiple variants in the same entry,
 # so that each gene-variant pair is represented as a separate row.
 decoupleMultipleHits <- function(hitTable) {
+
+  if (nrow(hitTable) == 0) {
+    return(hitTable)
+  }
+
   vars <- hitTable$Hit
 
   # separate gene and variant columns
@@ -102,6 +107,13 @@ build_dr_validations <- function(tissues, resultPath, DRplotsPath, RR_th=1.71, d
       allDRvalidations <- rbind(allDRvalidations, rRES)
     }
   }
+
+  if (is.null(allDRvalidations)) {
+    return(list(
+      allDRvalidations = NULL,
+      tissueDRvalidations = tissueDRvalidations
+    ))
+  }
   
   allDRvalidations <- allDRvalidations[!is.na(allDRvalidations$validated), ]
   
@@ -111,9 +123,21 @@ build_dr_validations <- function(tissues, resultPath, DRplotsPath, RR_th=1.71, d
   ))
 }
 
-# Summarises the number of cancer-type-specific hits, the subset that can be
+# Summarizes the number of cancer-type-specific hits, the subset that can be
 # assessed using available drug-response data, and how many of those are validated.
 summarise_dr_validations <- function(allDRvalidations, allHits) {
+
+  if (is.null(allDRvalidations) || nrow(allDRvalidations) == 0) {
+    cat("No drug-response validations available\n")
+
+    return(list(
+      ncts_hits = length(unique(
+        paste(allHits$ctype, allHits$GENE, allHits$var)
+      )),
+      nvalidable = 0,
+      nvalidated = 0
+    ))
+  }
   
   # Unique cancer type + hit combinations with DR information
   sigs <- paste(allDRvalidations$ctype, allDRvalidations$Hit)
@@ -151,6 +175,11 @@ build_annotated_SAMs <- function(allDRvalidations, intOGen_drivers, intOGen_driv
   
   # Keep only validated drug-response associations
   allDRvalidations <- allDRvalidations[allDRvalidations$validated == TRUE, ]
+
+  if (nrow(allDRvalidations) == 0) {
+    cat("No validated drug-response associations were identified\n")
+    return(NULL)
+  }
   
   allSAMs <- decoupleMultipleHits(hitTable = allDRvalidations)
   allSAMs <- allSAMs[order(allSAMs$cancer_type), ]
@@ -187,3 +216,42 @@ build_annotated_SAMs <- function(allDRvalidations, intOGen_drivers, intOGen_driv
   return(allSAMs)
 }
 
+# FIGURE 4E
+# Plot representing the genes most frequently involved in SAMs
+plot_frequent_SAM_genes <- function(allSAMs, figuresPath) {
+
+  if (is.null(allSAMs) || nrow(allSAMs) == 0) {
+    cat("No SAMs available for plotting\n")
+    return(NULL)
+  }
+  
+  # One SAM = one unique cancer type-gene-variant combination
+  unique_SAMs <- unique(allSAMs[, c("cancer_type", "genes", "vars", "isAcancerDriver")])
+  
+  # Count SAMs per gene
+  gene_counts <- aggregate(vars ~ genes, data = unique_SAMs, FUN = length)
+  
+  colnames(gene_counts) <- c("gene", "n_SAMs")
+  
+  # IntOGen driver status
+  driver_status <- aggregate(isAcancerDriver ~ genes, data = unique_SAMs, FUN = any)
+  
+  plot_data <- merge(gene_counts, driver_status, by.x = "gene", by.y = "genes")
+  plot_data <- plot_data[order(-plot_data$n_SAMs, plot_data$gene),]
+  
+  bar_colors <- ifelse(plot_data$isAcancerDriver, adjustcolor("#264292", alpha.f = 0.70), "#f79421")
+  
+  pdf(file.path(figuresPath, "genes_most_frequently_involved_in_SAMs.pdf"), width = max(7, 0.45 * nrow(plot_data)), height = 5)
+  par(mar = c(8, 5, 2, 1), mgp = c(3, 0.8, 0), las = 1)
+  
+  max_count <- max(plot_data$n_SAMs)
+  y_ticks <- c(1, 2, 5, 10, 20, 50, 100)
+  y_ticks <- y_ticks[y_ticks <= max_count]
+  
+  barplot(plot_data$n_SAMs, names.arg = plot_data$gene, col = bar_colors, border = FALSE, space = 0.25, las = 2, log = "y",
+    ylim = c(0.65, max_count * 1.15), ylab = "n SAMs", cex.names = 0.9, cex.lab = 1.2, cex.axis = 1, font.lab = 2, yaxt = "n")
+  axis(side = 2, at = y_ticks, labels = y_ticks, las = 1, tck = -0.02)
+  dev.off()
+  
+  return(plot_data)
+}

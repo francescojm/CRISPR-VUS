@@ -152,7 +152,7 @@ summarize_tested_variants <- function(totalTestedVariants, figuresPath, tissues,
 # - selects significant hits based on predefined thresholds
 # - decouples multi-variant hits
 # - harmonizes positive cell lines with totalTestedVariants
-# - builds a gene-level table of DAM-bearing genes with intOGen info
+# - builds a gene-level table of DAM-bearing genes with IntOGen info
 # Saves:
 # - allHits (.RData and .tsv)
 # - allDAMs (.RData and .tsv)
@@ -246,7 +246,7 @@ summarize_DAMs <- function(allHits, allDAMs, totalTestedVariants, ntestedGenes) 
 # - number of DAM-bearing genes per cancer type
 plot_DAMs_by_ctype <- function(allDAMs, clc, figuresPath, produce_plots = TRUE) {
 
-  # SUPPLEMENTARY FIGURE 2 
+  # SUPPLEMENTARY FIGURE 2A 
   if (produce_plots) {
     pdf(file.path(figuresPath, 'DAMs_ctype.pdf'), 12,10)
     par(mar=c(25,5,2,5))
@@ -255,7 +255,8 @@ plot_DAMs_by_ctype <- function(allDAMs, clc, figuresPath, produce_plots = TRUE) 
             col=clc[names(sort(table(allDAMs$ctype), decreasing=TRUE)),1],
             border=FALSE, cex.names = 1.5)
     invisible(dev.off())
-
+    
+    # SUPPLEMENTARY FIGURE 2B
     pdf(file.path(figuresPath, 'DAMsbearing_ctype.pdf'), 12,10)
     par(mar=c(25,5,2,5))
     allDAMbearing <- allDAMs[!duplicated(allDAMs[,c('ctype','GENE')]),]
@@ -381,8 +382,8 @@ intOGen_role_enrichment <- function(intogen_drivers, allDAM_bearing_genes, k, N,
   cat(pAmb, "\n")
   nAmb <- x
 
-  # SUPPLEMENTARY FIGURE 5 
-  if (produce_plots) {
+  # SUPPLEMENTARY FIGURE 5A
+  if (produce_plots && sum(c(nTsg, nAmb, nAct)) > 0) {
     pdf(file.path(figuresPath, "pie_drivers.pdf"), 7,8)
     pie(c(nTsg,nAmb,nAct),
         col=c('#004add','#d5aff3','red'),
@@ -454,7 +455,7 @@ composition_analysis <- function(intogen_drivers, ct_mapping, figuresPath, tissu
   rownames(COMPOSITION) <- c('TSG','Amb','OG','Novel')
   rownames(COMPOSITIONp) <- c('TSG','Amb','OG','Novel')
   
-  # SUPPLEMENTARY FIGURE 5
+  # SUPPLEMENTARY FIGURE 5B
   if (produce_plots) {
     pdf(file.path(figuresPath, 'ActLoFenrichment.pdf'), 12,9)
     par(mfrow=c(1,3))
@@ -464,7 +465,7 @@ composition_analysis <- function(intogen_drivers, ct_mapping, figuresPath, tissu
             col='#75b4d9')
     abline(v= median(colSums(COMPOSITION)), lty=2, col='darkgray')
 
-    barplot(100*COMPOSITION[1:3,oo]/t(matrix(rep(colSums(COMPOSITION[,oo]),3),
+    barplot(100*COMPOSITION[1:3,oo,drop = FALSE]/t(matrix(rep(colSums(COMPOSITION[,oo,drop = FALSE]),3),
                                             ncol(COMPOSITION), 3)),
             horiz=TRUE, las=2, xlab='% DAM-bearing genes', xlim=c(0,25),
             cex.names=0.6, border=NA,
