@@ -52,15 +52,15 @@ After downloading the archive, unzip it in the root directory of the repository.
 
 ```text
 crispr-vus/
-├── CRISPR-VUS.ipynb
-├── config.yaml
-├── sessionInfo.txt
-├── R/
-├── data/
-│   ├── raw/
-│   └── Robj/
-├── results/
-└── README.md
+|-- CRISPR-VUS.ipynb
+|-- config.yaml
+|-- sessionInfo.txt
+|-- R/
+|-- data/
+|   |-- raw/
+|   |-- Robj/
+|-- results/
+|-- README.md
 ```
 
 The workflow expects the input files to be located inside the `data/` directory, following the structure shown above.
@@ -95,14 +95,14 @@ With the default configuration, the expected directory structure is:
 
 ```text
 crispr-vus/
-├── data/
-│   ├── raw/
-│   └── Robj/
-└── results/
-    ├── _CRISPR_plots/
-    ├── _figures_source/
-    ├── _DR_plots/
-    └── _tables_source/
+|-- data/
+|   |-- raw/
+|   `-- Robj/
+`-- results/
+    |-- _CRISPR_plots/
+    |-- _figures_source/
+    |-- _DR_plots/
+    `-- _tables_source/
 ```
 
 ---
