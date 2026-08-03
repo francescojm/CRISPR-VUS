@@ -139,7 +139,7 @@ The notebook contains parameters that can be modified before running the analysi
 
 ## Running the notebook
 
-Open the Google Colab notebook (`CRISPR-VUS.ipynb`) and run the notebook sections in order as described below.
+To run the notebook in Google Colab, first clone the repository to your local computer. You can then start a Colab-compatible local runtime from the root folder of the cloned `crispr-vus` repository. Open `CRISPR-VUS.ipynb` in Google Colab, connect it to the local runtime, and run the notebook sections in order as described below.
 
 ### First complete run
 
