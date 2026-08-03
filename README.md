@@ -34,8 +34,8 @@ crispr-vus/
 |   |-- 16_add_scores.r
 |   |-- 17_intogen_cosmic_patients.r
 |   |-- 18_patient_summary.r
-|   |-- 19_clinical_act.r
-|-- README.md
+|   `-- 19_clinical_act.r
+`-- README.md
 ```
 
 The Google Colab notebook is the main file used to run the analysis. The R scripts are loaded automatically from inside the notebook and should remain in the expected repository structure.
@@ -58,9 +58,9 @@ crispr-vus/
 |-- R/
 |-- data/
 |   |-- raw/
-|   |-- Robj/
+|   `-- Robj/
 |-- results/
-|-- README.md
+`-- README.md
 ```
 
 The workflow expects the input files to be located inside the `data/` directory, following the structure shown above.
