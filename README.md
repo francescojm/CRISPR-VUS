@@ -13,29 +13,29 @@ The repository contains:
 
 ```text
 crispr-vus/
-├── CRISPR-VUS.ipynb
-├── config.yaml
-├── sessionInfo.txt
-├── R/
-│   ├── 2_data_loading.r
-│   ├── 3_preprocessing.r
-│   ├── 4_tissue_selection.r
-│   ├── 5_DAM_analysis.r
-│   ├── 6_IntOGen_drivers.r
-│   ├── 7_SAM_analysis.r
-│   ├── 8_postprocessing.r
-│   ├── 9_visualization.r
-│   ├── 10_reactome_enrichment.r
-│   ├── 11_crosstissue_DAMs.r
-│   ├── 12_string_analysis.r
-│   ├── 13_cooccurrence.r
-│   ├── 14_DR_validation.r
-│   ├── 15_pos_annot.r
-│   ├── 16_add_scores.r
-│   ├── 17_intogen_cosmic_patients.r
-│   ├── 18_patient_summary.r
-│   └── 19_clinical_act.r
-└── README.md
+|-- CRISPR-VUS.ipynb
+|-- config.yaml
+|-- sessionInfo.txt
+|-- R/
+|   |-- 2_data_loading.r
+|   |-- 3_preprocessing.r
+|   |-- 4_tissue_selection.r
+|   |-- 5_DAM_analysis.r
+|   |-- 6_IntOGen_drivers.r
+|   |-- 7_SAM_analysis.r
+|   |-- 8_postprocessing.r
+|   |-- 9_visualization.r
+|   |-- 10_reactome_enrichment.r
+|   |-- 11_crosstissue_DAMs.r
+|   |-- 12_string_analysis.r
+|   |-- 13_cooccurrence.r
+|   |-- 14_DR_validation.r
+|   |-- 15_pos_annot.r
+|   |-- 16_add_scores.r
+|   |-- 17_intogen_cosmic_patients.r
+|   |-- 18_patient_summary.r
+|   |-- 19_clinical_act.r
+|-- README.md
 ```
 
 The Google Colab notebook is the main file used to run the analysis. The R scripts are loaded automatically from inside the notebook and should remain in the expected repository structure.
