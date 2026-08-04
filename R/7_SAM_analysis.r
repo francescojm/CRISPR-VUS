@@ -20,7 +20,8 @@ my.hypTest <- function(x,k,n,N) {  # mutated in the top k, top k most dependent,
 # Diagnostic plots include:
 # Ranked ln(IC50) values across cell lines with mutant lines highlighted
 # and drug concentration thresholds indicated.
-analyze_drugs <- function(RESTOT, CMP_annot, drugTargetInfo, gdscAll, DRplotsPath, ctiss, RR_th=1.71, dep_threshold=-0.5, n_rantrials = 1000, display=TRUE, tissue_idx=NULL, ntiss=NULL) {
+analyze_drugs <- function(RESTOT, CMP_annot, drugTargetInfo, gdscAll, DRplotsPath, ctiss, RR_th=1.71, dep_threshold=-0.5, hypTest_p=0.2, 
+                 empPval=0.2, drug_RR=1.5, drug_HG_pval=0.2, drug_EMP_pval=0.2, n_rantrials = 1000, display=TRUE, tissue_idx=NULL, ntiss=NULL) {
   
   # select tissue-specific cell lines
   clTiss <- CMP_annot$model_id[CMP_annot$cancer_type == ctiss]
@@ -28,8 +29,8 @@ analyze_drugs <- function(RESTOT, CMP_annot, drugTargetInfo, gdscAll, DRplotsPat
   # retains strongest DAMs
   RESTOT <- RESTOT[which(RESTOT$rank_ratio < RR_th & 
                             RESTOT$medFitEff < dep_threshold & 
-                            RESTOT$hypTest_p < 0.2 & 
-                            RESTOT$empPval < 0.2),]
+                            RESTOT$hypTest_p < hypTest_p & 
+                            RESTOT$empPval < empPval),]
   
   RES <- lapply(1:nrow(RESTOT), function(x) {
     
@@ -147,9 +148,9 @@ analyze_drugs <- function(RESTOT, CMP_annot, drugTargetInfo, gdscAll, DRplotsPat
         
         # defines a significant gene-drug association 
         validated <- (additionalInfos$medLn50_mutCLs < log(additionalInfos$max_conc)) & 
-          (additionalInfos$rankRatio <= 1.5) &
-          (additionalInfos$HG_pval < 0.20) &
-          (additionalInfos$EMP_pval < 0.20)
+          (additionalInfos$rankRatio <= drug_RR) &
+          (additionalInfos$HG_pval < drug_HG_pval) &
+          (additionalInfos$EMP_pval < drug_EMP_pval)
         
         additionalInfos <- cbind(additionalInfos,validated)
         

@@ -60,15 +60,15 @@ compute_mut_burden <- function(tissues, CMP_annot, cl_variants) {
 }
 
 # Count the number of unique DAM-bearing genes in each tissue.
-compute_hits_by_tissue <- function(results, tissues, dep_threshold, RR_th) {
+compute_hits_by_tissue <- function(results, tissues, dep_threshold, RR_th, hypTest_p = 0.2, empPval = 0.2) {
   num_hits <- c()
   for (ctiss in tissues) {
     num_hits <- c(num_hits, length(unique(
       results[[ctiss]]$GENE[
         results[[ctiss]]$rank_ratio < RR_th &
           results[[ctiss]]$medFitEff < dep_threshold &
-          results[[ctiss]]$hypTest_p < 0.2 &
-          results[[ctiss]]$empPval < 0.2
+          results[[ctiss]]$hypTest_p < hypTest_p &
+          results[[ctiss]]$empPval < empPval
       ]
     )))
   }
@@ -92,15 +92,15 @@ report_hits_by_tissue <- function(num_hits_norm) {
 }
 
 # Collect all DAM-bearing genes across tissues
-collect_hits <- function(results, tissues, dep_threshold, RR_th) {
+collect_hits <- function(results, tissues, dep_threshold, RR_th, hypTest_p = 0.2, empPval = 0.2) {
   hits <- c()
   for (ctiss in tissues) {
     hits <- c(hits, unique(
       results[[ctiss]]$GENE[
         results[[ctiss]]$rank_ratio < RR_th &
           results[[ctiss]]$medFitEff < dep_threshold &
-          results[[ctiss]]$hypTest_p < 0.2 &
-          results[[ctiss]]$empPval < 0.2
+          results[[ctiss]]$hypTest_p < hypTest_p &
+          results[[ctiss]]$empPval < empPval
       ]
     ))
   }
@@ -234,7 +234,7 @@ plot_other_driver_venns_and_tests <- function(benchmark, hits, cl_variants, figu
 # - "Novel": detected here but not previously known in that cancer type
 # - "Known Not Found": known in that cancer type but not detected here
 compute_driver_summary_matrices <- function(driver_genes, tissues, results, cancer_match_long_CMP, cancer_match_long_into, 
-                                            intogen_drivers, dep_threshold, RR_th) {
+                                            intogen_drivers, dep_threshold, RR_th, hypTest_p = 0.2, empPval = 0.2) {
 
   summary_drivers <- matrix(nrow = length(driver_genes), ncol = length(tissues))
   rownames(summary_drivers) <- driver_genes
@@ -250,8 +250,8 @@ compute_driver_summary_matrices <- function(driver_genes, tissues, results, canc
       if (dg %in% results[[ctiss]]$GENE[
         results[[ctiss]]$rank_ratio < RR_th &
           results[[ctiss]]$medFitEff < dep_threshold &
-          results[[ctiss]]$hypTest_p < 0.2 &
-          results[[ctiss]]$empPval < 0.2
+          results[[ctiss]]$hypTest_p < hypTest_p &
+          results[[ctiss]]$empPval < empPval
       ]) {
         
         # Detected as a hit, initially classified as novel
@@ -363,7 +363,7 @@ plot_driver_barplot <- function(figuresPath, summary_drivers, tissues, produce_p
 
 # Build a binary matrix showing in which tissues each non-driver hit is detected.
 # Rows are genes, columns are tissues, and entries are 1 if the gene is a hit.
-compute_nondriver_summary_matrix <- function(hits_nodriver, tissues, results, dep_threshold, RR_th) {
+compute_nondriver_summary_matrix <- function(hits_nodriver, tissues, results, dep_threshold, RR_th, hypTest_p = 0.2, empPval = 0.2) {
 
   summary_nodrivers <- matrix(0, nrow = length(hits_nodriver), ncol = length(tissues))
   rownames(summary_nodrivers) <- hits_nodriver
@@ -375,8 +375,8 @@ compute_nondriver_summary_matrix <- function(hits_nodriver, tissues, results, de
       if (dg %in% results[[ctiss]]$GENE[
         results[[ctiss]]$rank_ratio < RR_th &
           results[[ctiss]]$medFitEff < dep_threshold &
-          results[[ctiss]]$hypTest_p < 0.2 &
-          results[[ctiss]]$empPval < 0.2
+          results[[ctiss]]$hypTest_p < hypTest_p &
+          results[[ctiss]]$empPval < empPval
       ]) {
         summary_nodrivers[dg, ctiss] <- 1
       }

@@ -47,7 +47,7 @@ decoupleMultipleHits <- function(hitTable) {
 # For each tissue/cancer type, loads screening results, filters significant hits,
 # matches them to available drug-response files, and builds a combined table
 # of drug-response validations across tissues.
-build_dr_validations <- function(tissues, resultPath, DRplotsPath, RR_th=1.71, dep_threshold=-0.5) {
+build_dr_validations <- function(tissues, resultPath, DRplotsPath, RR_th=1.71, dep_threshold=-0.5, hypTest_p = 0.2, empPval = 0.2) {
   
   allDRvalidations <- NULL
   tissueDRvalidations <- list()
@@ -60,8 +60,8 @@ build_dr_validations <- function(tissues, resultPath, DRplotsPath, RR_th=1.71, d
     hits <- RESTOT[
       RESTOT$medFitEff < dep_threshold &
       RESTOT$rank_ratio < RR_th &
-      RESTOT$hypTest_p < 0.20 &
-      RESTOT$empPval < 0.20, ]
+      RESTOT$hypTest_p < hypTest_p &
+      RESTOT$empPval < empPval, ]
     
     allTar <- hits$GENE
     allVar <- hits$var

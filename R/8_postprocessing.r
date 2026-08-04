@@ -157,7 +157,7 @@ summarize_tested_variants <- function(totalTestedVariants, figuresPath, tissues,
 # - allHits (.RData and .tsv)
 # - allDAMs (.RData and .tsv)
 # - allDAM_bearing_genes (.RData and .tsv)
-collect_all_DAMs <- function(resultPath, totalTestedVariants, RR_th, dep_threshold) {
+collect_all_DAMs <- function(resultPath, totalTestedVariants, RR_th, dep_threshold, empPval = 0.20, hypTest_p = 0.20) {
   fc <- dir(resultPath)
   fc <- grep('_results.RData', fc, value=TRUE)
   allDAMs <- NULL
@@ -171,7 +171,7 @@ collect_all_DAMs <- function(resultPath, totalTestedVariants, RR_th, dep_thresho
 
     # select significant hits
     hitsIdxs <- which(RESTOT$medFitEff < dep_threshold & RESTOT$rank_ratio < RR_th &
-                      RESTOT$empPval < 0.20 & RESTOT$hypTest_p < 0.20)
+                      RESTOT$empPval < empPval & RESTOT$hypTest_p < hypTest_p)
     currHits <- RESTOT[hitsIdxs,]
     currDAMs <- decoupleMultipleHits(hitTable = currHits)
 
@@ -231,7 +231,7 @@ collect_all_DAMs <- function(resultPath, totalTestedVariants, RR_th, dep_thresho
 # - fraction of tested cases that are DAMs
 # - number and fraction of genes affected
 summarize_DAMs <- function(allHits, allDAMs, totalTestedVariants, ntestedGenes) {
-  cat(nrow(allHits), "hits with rankratio and medFitness effect below the thresholds (default: 1.71 and -0.5 respectively), empP < 0.20 and HG P < 0.20 across cancer types\n")
+  cat(nrow(allHits), "hits with rankratio, medFitness effect, emp pvalue, and HG pvalue below the thresholds (default: 1.71, -0.5, 0.2, and 0.2 respectively), across cancer types\n")
   cat(nrow(allDAMs), "individual DAMs across cancer types\n")
   cat("corresponding to", length(unique(paste(allDAMs$GENE, allDAMs$var))), "individual variants\n")
   cat(100 * length(paste(allDAMs$GENE, allDAMs$var)) / nrow(totalTestedVariants),

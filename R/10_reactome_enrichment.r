@@ -207,7 +207,7 @@ prepare_background_data2 <- function(background, intOGen_drivers, ensembl = NULL
 # Performs permutation-based Reactome enrichment simulation.
 # Randomly samples genes preserving pathway membership proportions,
 # computes overlap with known enrichments, and saves null distributions.
-run_random_enrichment_simulation <- function(new_DAM_bearing_entrez, known_DAM_bearing_entrez, new_background_entrez, all_genes,
+run_random_enrichment_simulation <- function(new_DAM_bearing_entrez, known_DAM_bearing_entrez, new_background_entrez, all_genes, nsim = 1000,
   pathway_to_genes, known_DAM_enrichments, background_entrez, OnlyInAllPaths, resultPath) {
   
   cleng_ <- NULL
@@ -225,7 +225,7 @@ run_random_enrichment_simulation <- function(new_DAM_bearing_entrez, known_DAM_b
   
   set.seed(1234)
   
-  for (i in 1:1000) {
+  for (i in 1:nsim) {
     
     # randomly sample genes that are in Reactome pathways
     randomGenesInPathways <- as.character(sample(intersect(new_background_entrez, allGenes_in_reactome), n_new_DAM_entrez_in_Reactome))
