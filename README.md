@@ -5,7 +5,7 @@
 This repository contains the analysis workflow for the CRISPR-VUS project, a CRISPR enhanced analytical framework that systematically identifies
 Dependency-Associated Mutations (DAMs): somatic variants linked to increased viability dependency on their hosting gene in cancer cells.
 
-The workflow is run through a Google Colab notebook. The repository also contains R scripts with functions that are sourced by the notebook during execution.
+The analysis workflow is organized in a Jupyter notebook (`CRISPR_VUS.ipynb`), together with a collection of R scripts containing the functions used throughout the analysis. These scripts are sourced by the notebook during execution.
 
 ## Repository structure
 
@@ -13,7 +13,7 @@ The repository contains:
 
 ```text
 crispr-vus/
-|-- CRISPR-VUS.ipynb
+|-- CRISPR_VUS.ipynb
 |-- config.yaml
 |-- sessionInfo.txt
 |-- R/
@@ -38,7 +38,7 @@ crispr-vus/
 `-- README.md
 ```
 
-The Google Colab notebook is the main file used to run the analysis. The R scripts are loaded automatically from inside the notebook and should remain in the expected repository structure.
+The notebook is the main file used to run the analysis. The R scripts are loaded automatically from inside the notebook and should remain in the expected repository structure.
 
 ---
 
@@ -52,7 +52,7 @@ After downloading the archive, unzip it in the root directory of the repository.
 
 ```text
 crispr-vus/
-|-- CRISPR-VUS.ipynb
+|-- CRISPR_VUS.ipynb
 |-- config.yaml
 |-- sessionInfo.txt
 |-- R/
@@ -127,19 +127,21 @@ The notebook contains parameters that can be modified before running the analysi
 
 | Parameter | Default | Description |
 |---|---:|---|
-| `dep_threshold` | `-0.5` | Dependency threshold used to classify a variant effect as essential. |
+| `dep_threshold` | `-0.5` | Maximum median DepMap fitness score across mutant CCLs for DAM selection. |
 | `min_tissue_n` | `5` | Minimum number of samples required for a tissue to be included in downstream analyses. |
-| `download_latest` | `FALSE` | Controls whether the workflow downloads new external source files or uses local files. |
-| `RR_th` | `1.71` | Empirical relative-risk threshold. Lower RR values indicate stronger clustering of mutants in highly dependent cell lines. |
+| `RR_th` | `1.71` | Maximum rankRatio for DAM selection. Lower values indicate stronger clustering of mutant CCLs among highly dependent cell lines. |
+| `empirical_p_th` | `0.2` | Maximum empirical permutation p-value for DAM selection. |
+| `hypergeom_p_th` | `0.2` | Maximum hypergeometric tail p-value for DAM selection. |
 | `n_rantrials` | `1000` | Number of permutations used for empirical p-value estimation. |
-| `produce_plots` | `TRUE` | Controls whether plots are generated during execution. |
+| `produce_plots` | `TRUE` | Controls whether plots are generated during execution. Generated plots are saved in `figuresPath`. |
 | `sel_tissue_idx` | `NULL` | Selects which tissues to analyse. `NULL` means that all eligible tissues are analysed. Specific tissues can be selected by providing their indices, for example `c(6, 24, 28)`. |
+| `cosmic_version` | `"v_104"` | COSMIC release to use. "v101" reproduces the published results, while "v104" was the latest release available at the time of code release. |
 
 ---
 
 ## Running the notebook
 
-To run the notebook in Google Colab, first clone the repository to your local computer. You can then start a Colab-compatible local runtime from the root folder of the cloned `crispr-vus` repository. Open `CRISPR-VUS.ipynb` in Google Colab, connect it to the local runtime, and run the notebook sections in order as described below.
+To run the notebook in Google Colab, first clone the repository to your local computer. You can then start a Colab-compatible R local runtime from the root folder of the cloned `crispr-vus` repository. Open `CRISPR_VUS.ipynb` in Google Colab, connect it to the local R runtime, and run the notebook sections in order as described below.
 
 ### First complete run
 
