@@ -38,7 +38,7 @@ crispr-vus/
 `-- README.md
 ```
 
-The notebook is the main file used to run the analysis. The R scripts are loaded automatically from inside the notebook and should remain in the expected repository structure.
+The `CRISPR_VUS.ipynb` notebook is the main file used to run the analysis. The R scripts are loaded automatically from inside the notebook and should remain in the expected repository structure.
 
 ---
 
