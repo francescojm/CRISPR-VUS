@@ -59,7 +59,6 @@ crispr-vus/
 |-- data/
 |   |-- raw/
 |   `-- Robj/
-|-- results/
 `-- README.md
 ```
 
