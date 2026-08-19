@@ -6,30 +6,40 @@ library(stringr)
 # Build an aggregated intOGen count table, assign each entry to a gene-protein variant label
 create_intogen_counts_aggr <- function(loc_file, allDAMs_Positions) {
 
-  x <- 1:nrow(loc_file)
+  # Build composite identifiers once
+  loc_key <- paste(loc_file$gene_name,
+    loc_file$chromosome,
+    loc_file$position,
+    loc_file$allele_string,
+    sep = "\r")
 
-  var <- unlist(lapply(x, function(x) {
-    # Find the matching variant in the DAM position table
-    id <- which(allDAMs_Positions$gene_name == loc_file$gene_name[x] &
-                  allDAMs_Positions$chromosome == loc_file$chromosome[x] &
-                  allDAMs_Positions$position == loc_file$position[x] &
-                  allDAMs_Positions$allele_string == loc_file$allele_string[x])
+  dam_key <- paste(allDAMs_Positions$gene_name,
+    allDAMs_Positions$chromosome,
+    allDAMs_Positions$position,
+    allDAMs_Positions$allele_string,
+    sep = "\r")
 
-    if (length(id) == 0) {
-      return(NA_character_)
-    }
-    
-    # Extract gene name and protein mutation from the matched DAM record
-    geneName <- allDAMs_Positions$gene_name[id]
-    pmut <- allDAMs_Positions$protein_mutation[id]
-    pmut <- str_split(pmut, "p.")[[1]][2]
+  # Match every loc_file row 
+  idx <- match(loc_key, dam_key)
 
-    # Create a compact variant signature: gene-protein_change
-    varSig <- paste(geneName, pmut, sep = "-")
-  }))
+  # Allocate output
+  var <- rep(NA_character_, nrow(loc_file))
 
-  # Keep the relevant intOGen columns and append the variant signature
-  intogen_counts_aggr <- cbind(loc_file[, 2:(ncol(loc_file) - 7)], var)
+  matched <- !is.na(idx)
+
+  if (any(matched)) {
+
+    gene_name <- allDAMs_Positions$gene_name[idx[matched]]
+    protein_mutation <- allDAMs_Positions$protein_mutation[idx[matched]]
+
+    # Remove leading "p."
+    protein_mutation <- sub("^p\\.", "", protein_mutation)
+
+    var[matched] <- paste(gene_name, protein_mutation, sep = "-")
+  }
+
+  # Count columns and append variant
+  intogen_counts_aggr <- cbind(loc_file[, 2:(ncol(loc_file) - 7), drop = FALSE], var = var)
 
   return(intogen_counts_aggr)
 }
@@ -51,61 +61,96 @@ compute_summary_and_tissue_lists <- function(allDAMs, intogen_counts_aggr, COSMI
 
   allDAMs$var <- vars
 
+  # Work only on unique variants
+  vars_unique <- unique(vars)
+
   # Summary matrix and tissue-specific occurrence containers
-  summary_vars <- matrix(nrow = length(vars), ncol = 10)
-  rownames(summary_vars) <- vars
+  summary_vars <- matrix(nrow = length(vars_unique), ncol = 10)
+  rownames(summary_vars) <- vars_unique
 
-  all_tiss_intogen <- vector("list", length(vars))
-  names(all_tiss_intogen) <- vars
+  all_tiss_intogen <- vector("list", length(vars_unique))
+  names(all_tiss_intogen) <- vars_unique
 
-  all_tiss_cosmic <- vector("list", length(vars))
-  names(all_tiss_cosmic) <- vars
+  all_tiss_cosmic <- vector("list", length(vars_unique))
+  names(all_tiss_cosmic) <- vars_unique
+
+  # Pre-compute indices to avoid repeatedly scanning the full data frames
+
+  # allDAMs lookup 
+  allDAMs_ind <- split(seq_len(nrow(allDAMs)), allDAMs$var)
+
+  # intOGen lookup 
+  intogen_ind <- split(seq_len(nrow(intogen_counts_aggr)), intogen_counts_aggr$var)
+
+  # COSMIC lookup, build the same gene-mutation identifier used for DAMs 
+  COSMIC_var <- paste(COSMIC$GENE_SYMBOL, COSMIC$MUTATION_AA, sep = "-")
+
+  # Only index COSMIC variants that are present among the DAMs 
+  keep_cosmic <- COSMIC_var %in% vars_unique 
+  COSMIC_ind <- split(which(keep_cosmic), COSMIC_var[keep_cosmic]) 
+  
+  # Free temporary object 
+  rm(COSMIC_var, keep_cosmic) 
+  gc()
 
   # Process each variant independently
-  for(dg in vars) {
+  n_vars <- length(vars_unique)
+
+  for(i in seq_along(vars_unique)) {
+    dg <- vars_unique[i] 
+    cat("Variant", i, "/", n_vars, "\n")
+
     gene <- unlist(strsplit(dg, "-"))[[1]]
     mut <- unlist(strsplit(dg, "-"))[[2]]
     # Store gene and variant labels
     summary_vars[dg,1] <- gene
     summary_vars[dg,2] <- mut
     # tissues where it is a hit
-    tissues_hit <- allDAMs$ctype[which(allDAMs$var==dg)]
-    summary_vars[dg,3] <- length(tissues_hit)/ntiss # percentage of tissues
-    summary_vars[dg,4] <- paste(tissues_hit, collapse=" | ")
+    ind_dam <- allDAMs_ind[[dg]] 
+    if(!is.null(ind_dam)) { 
+        tissues_hit <- allDAMs$ctype[ind_dam] 
+        summary_vars[dg, 3] <- length(tissues_hit) / ntiss 
+        summary_vars[dg, 4] <- paste(tissues_hit, collapse = " | ") }
     
     # intOGen recurrence summary
-    if(length(which(intogen_counts_aggr$var==dg))>0) {
-        ind_dg <- which(intogen_counts_aggr$var==dg)
-    
-    summary_vars[dg,7] <- sum(intogen_counts_aggr[ind_dg, -74])
-    summary_vars[dg,9] <- paste(colnames(intogen_counts_aggr[,-74])[which(intogen_counts_aggr[ind_dg,-74]>0)], collapse=" | ")
+    ind_dg <- intogen_ind[[dg]] 
 
-    ct_counts <- c()
-    for(ct_ind in which(intogen_counts_aggr[ind_dg,-74]>0)) {
-        
-        ct_counts <- c(ct_counts, intogen_counts_aggr[ind_dg,-74][ct_ind])
-    }
-    if(sum(intogen_counts_aggr[ind_dg,-74])) {
-    names(ct_counts) <- colnames(intogen_counts_aggr[,-74])[which(intogen_counts_aggr[ind_dg,-74]>0)]
-    all_tiss_intogen[[dg]] <- ct_counts
-    }
+    if(!is.null(ind_dg)) {
+        summary_vars[dg, 7] <- sum(intogen_counts_aggr[ind_dg, -74])
+        summary_vars[dg, 9] <- paste( colnames(intogen_counts_aggr[, -74])[ which(intogen_counts_aggr[ind_dg, -74] > 0) ], collapse = " | " )
+        ct_counts <- c()
+        for(ct_ind in which(intogen_counts_aggr[ind_dg, -74] > 0)) {
+            ct_counts <- c( ct_counts, intogen_counts_aggr[ind_dg, -74][ct_ind] ) 
+        }
+
+        if(sum(intogen_counts_aggr[ind_dg, -74])) {
+            names(ct_counts) <- colnames(intogen_counts_aggr[, -74])[ which(intogen_counts_aggr[ind_dg, -74] > 0) ]
+            all_tiss_intogen[[dg]] <- ct_counts
+        }
     }
 
     # COSMIC recurrence summary
-    ind_sel <- which(COSMIC$GENE_SYMBOL==gene & COSMIC$MUTATION_AA==mut)
-    summary_vars[dg,10] <- paste(unique(COSMICprimarysite[ind_sel]), collapse=" | ")
-    summary_vars[dg,8] <- length(unique(COSMIC$COSMIC_SAMPLE_ID[ind_sel]))
+    ind_sel <- COSMIC_ind[[dg]]
+    if (is.null(ind_sel)) {
+        summary_vars[dg, 10] <- ""
+        summary_vars[dg, 8] <- 0
+    } else {
+        summary_vars[dg, 10] <- paste( unique(COSMICprimarysite[ind_sel]), collapse = " | " )
+        summary_vars[dg, 8] <- length( unique(COSMIC$COSMIC_SAMPLE_ID[ind_sel]) ) 
+        ct_counts <- c() 
+        
+        for(ct in unique(COSMICprimarysite[ind_sel])) {
+            # Search only among rows belonging to the current variant 
+            ind_tiss <- ind_sel[which(COSMICprimarysite[ind_sel] == ct)]
+            ct_counts <- c( ct_counts, length( unique( COSMIC$COSMIC_SAMPLE_ID[ind_tiss])))
+        }
 
-    ct_counts <- c()
-    for(ct in unique(COSMICprimarysite[ind_sel])) {
-        ind_tiss <- which(COSMICprimarysite==ct)
-        ct_counts <- c(ct_counts, length(unique(COSMIC$COSMIC_SAMPLE_ID[intersect(ind_sel, ind_tiss)])))
+        if(length(unique(COSMICprimarysite[ind_sel])) > 0) {
+            names(ct_counts) <- unique(COSMICprimarysite[ind_sel])
+            all_tiss_cosmic[[dg]] <- ct_counts
+        }
     }
-    if(length(unique(COSMICprimarysite[ind_sel]))>0) {
-    names(ct_counts) <- unique(COSMICprimarysite[ind_sel])
-    all_tiss_cosmic[[dg]] <- ct_counts
-    }
-    }
+  }
 
   # Convert the summary matrix into a clean data frame
   summary_vars <- data.frame(
@@ -119,14 +164,7 @@ compute_summary_and_tissue_lists <- function(allDAMs, intogen_counts_aggr, COSMI
     Type_COSMIC = (summary_vars[, 10])
   )
   
-  # Remove duplicated variants to keep one row per unique event
-  ind_remove <- which(duplicated(vars))
-  if (length(ind_remove) > 0) {
-    summary_vars <- summary_vars[-ind_remove, , drop = FALSE]
-    all_tiss_intogen <- all_tiss_intogen[-ind_remove]
-    all_tiss_cosmic <- all_tiss_cosmic[-ind_remove]
-  }
-  rownames(summary_vars) <- unique(vars)
+  rownames(summary_vars) <- vars_unique
   
   # Replace missing intOGen values with zeros / empty strings
   summary_vars$Num_Intogen[is.na(summary_vars$Num_Intogen)] <- 0
