@@ -152,7 +152,7 @@ For the first complete run, execute sections 1 to 8 in order:
 
 These sections set up the analysis, load and preprocess the data, select tissues, run the main DAM analysis, integrate driver information, run drug-response analyses, and generate the intermediate results used by later sections.
 
-Section 5 is computationally intensive and may take a long time to complete. If the Colab session is interrupted, the section can be safely rerun: completed tissues are skipped automatically, the analysis resumes from the first unfinished tissue, and the saved random seed state is restored to preserve reproducibility.
+Section 5 is computationally intensive and may take a long time to complete. If the Colab session is interrupted, the section can be safely rerun: completed tissues are skipped automatically, allowing the analysis to resume from the first unfinished tissue. To ensure reproducibility of the empirical p-values and FDR estimates across resumed runs and original results, a precomputed tissue-specific RNG state, provided in the data folder, is loaded before processing each tissue.
 
 ### Later runs
 
