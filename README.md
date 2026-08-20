@@ -134,7 +134,7 @@ The notebook contains parameters that can be modified before running the analysi
 | `n_rantrials` | `1000` | Number of permutations used for empirical p-value estimation. |
 | `produce_plots` | `TRUE` | Controls whether plots are generated during execution. Generated plots are saved in `figuresPath`. |
 | `sel_tissue_idx` | `NULL` | Selects which tissues to analyse. `NULL` means that all eligible tissues are analysed. Specific tissues can be selected by providing their indices, for example `c(6, 24, 28)`. |
-| `cosmic_version` | `"v_104"` | COSMIC release to use. "v101" reproduces the published results, while "v104" was the latest release available at the time of code release. |
+| `cosmic_version` | `"v_101"` | COSMIC release to use. "v101" reproduces the published results, while "v104" was the latest release available at the time of code release. |
 
 ---
 
