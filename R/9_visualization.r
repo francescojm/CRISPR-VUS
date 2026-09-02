@@ -12,7 +12,7 @@ plot_nDAMs_in_nCtypes <- function(allDAMs, figuresPath, produce_plots = TRUE) {
     sort(summary(as.factor(paste(allDAMs$GENE,allDAMs$var)),10000))
   ))
 
-  # FIGURE 2D
+  # FIGURE 2E
   if (produce_plots) {
     pdf(file.path(figuresPath,'nDAMs_in_nCtypes.pdf'),6,6)
     barplot(
@@ -52,7 +52,7 @@ compute_DAMbgs_across_analyses <- function(allHits) {
 # Plots distribution of DAMbgs recurrence across cancer types
 plot_nDAMbgs_in_nCtypes <- function(DAMbgsAcrossNanalysis, figuresPath, produce_plots = TRUE) {
   
-  # FIGURE 2D
+  # FIGURE 2E
   if (produce_plots) {
     pdf(file.path(figuresPath,'nDAMbgs_in_nCtypes.pdf'),6,6)
     barplot(log10(summary(as.factor(DAMbgsAcrossNanalysis))+1),
@@ -133,7 +133,7 @@ plot_DAM_expression <- function(allHits, figuresPath, produce_plots = TRUE) {
 # Computes overlap between significant hits and essential genes.
 plot_essentiality_matching <- function(allHits, figuresPath, produce_plots = TRUE) {
   
-  # FIGURE 2C
+  # FIGURE 2D
   if (produce_plots) {
     pdf(file.path(figuresPath,'essentialityDAMmatching.pdf'),5,5)
     hist(100*allHits$matching,border=FALSE,col='gray',main='')
@@ -143,7 +143,7 @@ plot_essentiality_matching <- function(allHits, figuresPath, produce_plots = TRU
   match_rate <- length(which(allHits$matching==1)) /
     length(allHits$matching)
   
-  # FIGURE 2C
+  # FIGURE 2D
   if (produce_plots) {
     pdf(file.path(figuresPath,'essentialityDAMmatchingHGp.pdf'),5,6)
     plot(-log10(allHits$hypTest_p),bg=adjustcolor("blue", alpha.f = 0.3),col=NA,pch=21,cex=2,frame.plot=FALSE,ylab='-log10(HG p)')
@@ -385,7 +385,7 @@ plot_SNR_genomic_groups <- function(percHitsPerCls, clc, figuresPath, produce_pl
   genomicallyNoisy <- intersect(genomicallyNoisy, names(percHitsPerCls))
   
   if (produce_plots) {
-    # FIGURE 2E
+    # FIGURE 2F
     pdf(file.path(figuresPath,'SNR_across_ctypes.pdf'),9,7)
 
     par(mar=c(16,4,2,0))
@@ -411,7 +411,7 @@ plot_SNR_genomic_groups <- function(percHitsPerCls, clc, figuresPath, produce_pl
     dev.off()
 
     # boxplot
-    # FIGURE 2F
+    # FIGURE 2G
     pdf(file.path(figuresPath, 'SNR_t_tests.pdf'), 7, 8)
     par(mar = c(15, 5, 2, 2))
     cex.axis = 0.8
