@@ -5,7 +5,7 @@
 This repository contains the analysis workflow for the CRISPR-VUS project, a CRISPR enhanced analytical framework that systematically identifies
 Dependency-Associated Mutations (DAMs): somatic variants linked to increased viability dependency on their hosting gene in cancer cells.
 
-The analysis workflow is organized in a Jupyter notebook (`CRISPR_VUS.ipynb`), together with a collection of R scripts containing the functions used throughout the analysis. These scripts are sourced by the notebook during execution.
+The analysis workflow is organized in a Jupyter notebook (`CRISPR_VUS.ipynb`), together with a collection of R scripts containing the functions used throughout the analysis. These scripts are sourced by the notebook during execution. The notebook can also be accessed in Google Colab at: https://colab.research.google.com/drive/1PkduxjbHQH4zZxk3g69LWQUGL_jsL-aq?usp=sharing 
 
 ## Repository structure
 
