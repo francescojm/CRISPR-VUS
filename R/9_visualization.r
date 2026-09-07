@@ -54,7 +54,7 @@ plot_nDAMbgs_in_nCtypes <- function(DAMbgsAcrossNanalysis, figuresPath, produce_
   
   # FIGURE 2E
   if (produce_plots) {
-    pdf(file.path(figuresPath,'nDAMbgs_in_nCtypes.pdf'),6,6)
+    (file.path(figuresPath,'nDAMbgs_in_nCtypes.'),6,6)
     barplot(log10(summary(as.factor(DAMbgsAcrossNanalysis))+1),
             border=FALSE,col='darkgray')
     invisible(dev.off())
@@ -88,7 +88,7 @@ plot_DAM_expression <- function(allHits, figuresPath, produce_plots = TRUE) {
   
   # FIGURE 2B
   if (produce_plots) {
-    pdf(file.path(figuresPath,'DAMs_exp_percentiles.pdf'),5,5)
+    (file.path(figuresPath,'DAMs_exp_percentiles.'),5,5)
     hist(allHits$percBasalEXP_of_ps_cl,border=FALSE,col='darkcyan',
       main=paste('Basal expression percentile of the hosting gene\nin cell line(s) arbouring the DAMs'),
       xlab='-th')
@@ -108,7 +108,7 @@ plot_DAM_expression <- function(allHits, figuresPath, produce_plots = TRUE) {
   
   # FIGURE 2B
   if (produce_plots) {
-    pdf(file.path(figuresPath,'percExpressedDAMs.pdf'),5,5)
+    (file.path(figuresPath,'percExpressedDAMs.'),5,5)
     pie(c(pp,100-pp),
         col=c('darkcyan','gray'),
         border=FALSE,
@@ -135,7 +135,7 @@ plot_essentiality_matching <- function(allHits, figuresPath, produce_plots = TRU
   
   # FIGURE 2D
   if (produce_plots) {
-    pdf(file.path(figuresPath,'essentialityDAMmatching.pdf'),5,5)
+    (file.path(figuresPath,'essentialityDAMmatching.'),5,5)
     hist(100*allHits$matching,border=FALSE,col='gray',main='')
     dev.off()
   }
@@ -145,7 +145,7 @@ plot_essentiality_matching <- function(allHits, figuresPath, produce_plots = TRU
   
   # FIGURE 2D
   if (produce_plots) {
-    pdf(file.path(figuresPath,'essentialityDAMmatchingHGp.pdf'),5,6)
+    (file.path(figuresPath,'essentialityDAMmatchingHGp.'),5,6)
     plot(-log10(allHits$hypTest_p),bg=adjustcolor("blue", alpha.f = 0.3),col=NA,pch=21,cex=2,frame.plot=FALSE,ylab='-log10(HG p)')
     abline(h= -log10(0.05),lty=2)
     dev.off()
@@ -198,7 +198,7 @@ plot_all_hits_summary <- function(allHits, clc, figuresPath, produce_plots = TRU
   
   # FIGURE 2A
   if (produce_plots) {
-    pdf(file.path(figuresPath,'All_Hits_summary.pdf'),18,8)
+    (file.path(figuresPath,'All_Hits_summary.'),18,8)
 
     print(ggplot(df, aes(x = x, y = y)) +
       geom_point(
@@ -267,7 +267,7 @@ plot_hits_correlations <- function(allDAMs, totalTestedVariants, incl_cl_annot, 
   percHitsPerCls <- 100*(nhits_across_ctypes[commoncl]/ncellLines_across_ctypes[commoncl]) /
     (ntested_variants_across_ctypes[commoncl]/ncellLines_across_ctypes[commoncl])
 
-  # SUPPLEMENTARY FIGURE 3ABC
+  # SUPPLEMENTARY FIGURE 7ABC
   if (produce_plots && length(commoncl) >= 3) {
     pdf(file.path(figuresPath,'nHits_correlations.pdf'),7,7)
     par(mfrow=c(2,2))
@@ -488,7 +488,7 @@ plot_most_frequent_unreported_DAMbgs <- function(allHits, intogen_drivers, figur
 
   tmp <- mostFreqDAMbgs[which(mostFreqDAMbgs>2)]
   
-  # SUPPLEMENTARY FIGURE 6A
+  # SUPPLEMENTARY FIGURE 11A
   if (produce_plots && length(tmp) > 0) {
     pdf(file.path(figuresPath,'mostFrequentUnreportedDAMbgs.pdf'),12,5)
     barplot(tmp,las=2,border=FALSE,col='orange',
