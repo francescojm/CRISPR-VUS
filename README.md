@@ -203,7 +203,3 @@ Sections 1 to 4 are required at the beginning of every notebook session because 
 The workflow was run in Google Colab using a local R runtime connection.
 
 The local runtime used R version 4.6.1. The complete R session information, including package versions, is reported in `sessionInfo.txt`.
-
-## Citation
-
-To be added.
