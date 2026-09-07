@@ -215,7 +215,7 @@ plot_and_report_patient_observation_pies <- function(allDAMs_with_funcImpact_and
                    allDAMs_with_funcImpact_and_clinical_rel$num_patient_intOGen == 0))
   
   # Plot pie chart for all DAMs
-  # SUPPLEMENTARY FIGURE 15A
+  # SUPPLEMENTARY FIGURE 20A
   if (produce_plots) {
     pdf(file.path(figuresPath, "04_in_patients_clinical_rap_of_all_DAMs.pdf"), 7, 5)
     pie(c(nDAMs_in_both_intogen_and_cosmic, nDAMs_in_cosmic_only, nDAMs_in_intogen_only, nDAMs_not_in_patients),
@@ -256,7 +256,7 @@ plot_and_report_patient_observation_pies <- function(allDAMs_with_funcImpact_and
                                           novelOnly$num_patient_intOGen == 0))
   
   # Plotting
-  # SUPPLEMENTARY FIGURE 15B
+  # SUPPLEMENTARY FIGURE 20B
   if (produce_plots && nDAMs > 0) {
     pdf(file.path(figuresPath, "04_in_patients_clinical_rap_of_novel_DAMs.pdf"), 7, 5)
     pie(c(nDAMs_in_both_intogen_and_cosmic, nDAMs_in_cosmic_only, nDAMs_in_intogen_only, nDAMs_not_in_patients),
@@ -363,7 +363,7 @@ compute_uvar_prevalence_and_outputs <- function(allDAMs_with_SIFT_Polyphen, allD
   uvarPrevalence <- uvarPrevalence[order(uvarPrevalence[, 1], decreasing = TRUE), ]
   
   # Plot the most prevalent known-driver DAMs
-  # SUPPLEMENTARY FIGURE 16A
+  # SUPPLEMENTARY FIGURE 21A
   howmany <- head(which(uvarPrevalence[, 3] > 0), 38)
   if (produce_plots && length(howmany) > 0) {
     pdf(file.path(figuresPath, "04_Known_DAMs_most_frequently_obser_in_patients.pdf"), 10, 5)
@@ -378,7 +378,7 @@ compute_uvar_prevalence_and_outputs <- function(allDAMs_with_SIFT_Polyphen, allD
   }
   
   # Plot the most prevalent unreported DAMs 
-  # SUPPLEMENTARY FIGURE 16B
+  # SUPPLEMENTARY FIGURE 21B
   howmany <- head(which(uvarPrevalence[, 3] == 0 & uvarPrevalence[, 2] > 0), 50)
   if (produce_plots && length(howmany) > 0) {
     pdf(file.path(figuresPath, "04_unreported_DAMs_most_frequently_obser_in_patients.pdf"), 15, 8)
