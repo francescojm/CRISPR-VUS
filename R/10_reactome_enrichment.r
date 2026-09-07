@@ -65,7 +65,7 @@ run_reactome_enrichment <- function(gene_entrez, universe_entrez, prefix, result
   write.table(enr, quote = FALSE, sep = '\t', dec = ',', row.names = FALSE, file = out_file) 
 
   # dotplot
-  # SUPPLEMENTARY FIGURE 9 
+  # SUPPLEMENTARY FIGURE 14 
   if (produce_plots && nrow(as.data.frame(enr)) > 0) {
     pdf(file.path(figuresPath, paste0('REACTOME_enrich_', prefix, 'DAMbearing.pdf')), 
       width = 7, height = 6)
@@ -265,7 +265,7 @@ run_pathway_enrichment_empirical_tests <- function(cleng_, eleng_, Conserved_pat
     presencePath, figuresPath, produce_plots = TRUE) {
   
   # conserved
-  # SUPPLEMENTARY FIGURE 11A 
+  # SUPPLEMENTARY FIGURE 16A 
   if (produce_plots) {
     pdf(file.path(figuresPath, "distr_of_conserved_pathEnrichments.pdf"), 5, 4)
     hist(cleng_,
@@ -284,7 +284,7 @@ run_pathway_enrichment_empirical_tests <- function(cleng_, eleng_, Conserved_pat
   pval_conserved, "\n")
   
   # new only
-  # SUPPLEMENTARY FIGURE 11B
+  # SUPPLEMENTARY FIGURE 16B
   if (produce_plots) {
     pdf(file.path(figuresPath, "distr_of_newOnly_pathEnrichments.pdf"), 5, 4)
     hist(eleng_,
@@ -304,7 +304,7 @@ run_pathway_enrichment_empirical_tests <- function(cleng_, eleng_, Conserved_pat
   pval_newOnly, "\n")
   
   # empirical frequency plot
-  # SUPPLEMENTARY FIGURE 11C
+  # SUPPLEMENTARY FIGURE 16C
   if (produce_plots) {
     pdf(file.path(figuresPath, "newOnly_pathEnrichments_empPval.pdf"), 11, 5)
     par(mar = c(6, 28, 0, 3))
@@ -362,7 +362,7 @@ run_driver_cooccurrence_analysis <- function(pathway_to_genes, IntOGen_Drivers_e
   cat("expected value =", expectation, "\n")
   
   # plot
-  # SUPPLEMENTARY FIGURE 12
+  # SUPPLEMENTARY FIGURE 17 AB
   if (produce_plots) {
     pdf(file.path(figuresPath, "CoOcc_with_known_drivers_in_REACTOME_pathways.pdf"), 5,3)
     hist(res,main=paste('co-occurrences in at least one pathway\nwith a cancer driver gene'),
@@ -420,7 +420,7 @@ run_pathway_coverage_analysis <- function(known_DAM_enrichments, all_DAM_enrichm
   Path_increasedCoverage <- Path_increasedCoverage[Path_increasedCoverage[,2] - Path_increasedCoverage[,1] > 0, , drop = FALSE]
   
   # plot 1: all pathways with increased coverage
-  # SUPPLEMENTARY FIGURE 10
+  # SUPPLEMENTARY FIGURE 15
   oo <- order(Path_increasedCoverage[,2] - Path_increasedCoverage[,1])
   if (produce_plots && nrow(Path_increasedCoverage) > 0) {
     pdf(file.path(figuresPath, "path_increasedcoverage.pdf"), 10,15)
