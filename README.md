@@ -58,7 +58,8 @@ crispr-vus/
 |-- R/
 |-- data/
 |   |-- raw/
-|   `-- Robj/
+|   |-- Robj/
+|   `-- CRISPR_rng_states/
 `-- README.md
 ```
 
@@ -96,7 +97,8 @@ With the default configuration, the expected directory structure is:
 crispr-vus/
 |-- data/
 |   |-- raw/
-|   `-- Robj/
+|   |-- Robj/
+|   `-- CRISPR_rng_states/
 `-- results/
     |-- _CRISPR_plots/
     |-- _figures_source/
@@ -140,7 +142,7 @@ The notebook contains parameters that can be modified before running the analysi
 
 ## Running the notebook
 
-To run the notebook in Google Colab, first clone the repository to your local computer. You can then start a Colab-compatible R local runtime from the root folder of the cloned `crispr-vus` repository. Open `CRISPR_VUS.ipynb` in Google Colab, connect it to the local R runtime, and run the notebook sections in order as described below.
+To run the notebook in Google Colab, first clone the repository to your local computer. You can then start a Colab-compatible R local runtime from the root folder of the cloned `crispr-vus` repository. Open `CRISPR_VUS.ipynb` in Google Colab (https://colab.research.google.com/drive/1PkduxjbHQH4zZxk3g69LWQUGL_jsL-aq?usp=sharing), connect it to the local R runtime, and run the notebook sections in order as described below.
 
 ### First complete run
 
