@@ -245,7 +245,7 @@ plot_cancer_type_distribution <- function(DAMbearigPatient_in_COSMIC, CL_colors_
   
   if (produce_plots && length(toPlot) > 0) {
     
-    # SUPPLEMENTARY FIGURE 17B
+    # SUPPLEMENTARY FIGURE 22B
     pdf(file.path(figuresPath, "06_DAMs_in_patients_lacking_act_unreported.pdf"), 9, 6)
     par(mar = c(13, 4, 3, 2))
     barplot(toPlot, las=2, border=FALSE, col=CL_colors_v[names(toPlot)], ylab='n.patients', cex.names = 0.7)
@@ -265,7 +265,7 @@ plot_cancer_type_distribution <- function(DAMbearigPatient_in_COSMIC, CL_colors_
 
   if (produce_plots && length(toPlot_all) > 0) {
 
-    # SUPPLEMENTARY FIGURE 17A
+    # SUPPLEMENTARY FIGURE 22A
     pdf(file.path(figuresPath, "06_DAMs_in_patients_lacking_act_perc.pdf"), 7, 5)
     par(mar = c(13, 4, 3, 2))
     barplot(stoPlot_all, border=FALSE, col=colors_stoPlot_all, las=2, log='y', ylim = c(0.01, 50), ylab = "%", cex.names = 0.7, yaxt = "n")
