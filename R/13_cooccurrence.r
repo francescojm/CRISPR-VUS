@@ -102,7 +102,7 @@ summarize_cooccurrence <- function(RES, figuresPath, plot_prefix = "unreportedDA
   coc_results <- coc_results[order(rowSums(coc_results), decreasing = TRUE), ]
   
   # Plot barplots
-  # SUPPLEMENTARY FIGURE 18A
+  # SUPPLEMENTARY FIGURE 6D
   if (produce_plots) {
     pdf(file.path(figuresPath, paste0(plot_prefix, "_coOcc.pdf")), 11,7)
     par(mar=c(16,4,2,2))
@@ -129,7 +129,7 @@ summarize_cooccurrence <- function(RES, figuresPath, plot_prefix = "unreportedDA
   cat(sprintf("Median %% of CCLs lacking mutated and essential lineage-specific GoF drivers: %.2f%%\n", median(100 * coc_results[,2] / rowSums(coc_results))))
   coc_results <- coc_results[order(rowSums(coc_results), decreasing = TRUE), ]
   
-  # SUPPLEMENTARY FIGURE 18B
+  # SUPPLEMENTARY FIGURE 6E
   if (produce_plots) {
     pdf(file.path(figuresPath, paste0(plot_prefix, "_coOcc_relaxed_criterion.pdf")), 11,7)
     par(mar=c(16,4,2,2))
