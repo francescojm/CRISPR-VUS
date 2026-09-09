@@ -18,6 +18,7 @@ crispr-vus/
 |-- CRISPR_VUS.ipynb
 |-- config.yaml
 |-- sessionInfo.txt
+|-- images/
 |-- R/
 |   |-- 2_data_loading.r
 |   |-- 3_preprocessing.r
@@ -48,7 +49,7 @@ The `CRISPR_VUS.ipynb` notebook is the main file used to run the analysis. The R
 
 The data required to run the workflow are provided separately from this repository.
 
-Download the data archive from Figshare: https://doi.org/10.6084/m9.figshare.33435853 
+Download the data archive, called CRISPR-VUS-DataPackage.zip, from Figshare: https://doi.org/10.6084/m9.figshare.33435853 
 
 After downloading the archive, unzip it in the root directory of the repository. The folder structure should look like this:
 
@@ -58,14 +59,14 @@ crispr-vus/
 |-- config.yaml
 |-- sessionInfo.txt
 |-- R/
-|-- data/
+|-- CRISPR-VUS-DataPackage/
 |   |-- raw/
 |   |-- Robj/
 |   `-- CRISPR_rng_states/
 `-- README.md
 ```
 
-The workflow expects the input files to be located inside the `data/` directory, following the structure shown above.
+The workflow expects the input files to be located inside the `CRISPR-VUS-DataPackage/` directory, following the structure shown above.
 
 ---
 
@@ -97,7 +98,7 @@ With the default configuration, the expected directory structure is:
 
 ```text
 crispr-vus/
-|-- data/
+|-- CRISPR-VUS-DataPackage/
 |   |-- raw/
 |   |-- Robj/
 |   `-- CRISPR_rng_states/
