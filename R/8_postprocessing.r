@@ -246,7 +246,7 @@ summarize_DAMs <- function(allHits, allDAMs, totalTestedVariants, ntestedGenes) 
 # - number of DAM-bearing genes per cancer type
 plot_DAMs_by_ctype <- function(allDAMs, clc, figuresPath, produce_plots = TRUE) {
 
-  # SUPPLEMENTARY FIGURE 5A 
+  # SUPPLEMENTARY FIGURE 1C 
   if (produce_plots) {
     pdf(file.path(figuresPath, 'DAMs_ctype.pdf'), 12,10)
     par(mar=c(25,5,2,5))
@@ -256,7 +256,7 @@ plot_DAMs_by_ctype <- function(allDAMs, clc, figuresPath, produce_plots = TRUE) 
             border=FALSE, cex.names = 1.5)
     invisible(dev.off())
     
-    # SUPPLEMENTARY FIGURE 5B
+    # SUPPLEMENTARY FIGURE 1D
     pdf(file.path(figuresPath, 'DAMsbearing_ctype.pdf'), 12,10)
     par(mar=c(25,5,2,5))
     allDAMbearing <- allDAMs[!duplicated(allDAMs[,c('ctype','GENE')]),]
@@ -382,7 +382,7 @@ intOGen_role_enrichment <- function(intogen_drivers, allDAM_bearing_genes, k, N,
   cat(pAmb, "\n")
   nAmb <- x
 
-  # SUPPLEMENTARY FIGURE 10A
+  # SUPPLEMENTARY FIGURE 4E
   if (produce_plots && sum(c(nTsg, nAmb, nAct)) > 0) {
     pdf(file.path(figuresPath, "pie_drivers.pdf"), 7,8)
     pie(c(nTsg,nAmb,nAct),
@@ -455,7 +455,7 @@ composition_analysis <- function(intogen_drivers, ct_mapping, figuresPath, tissu
   rownames(COMPOSITION) <- c('TSG','Amb','OG','Novel')
   rownames(COMPOSITIONp) <- c('TSG','Amb','OG','Novel')
   
-  # SUPPLEMENTARY FIGURE 10B
+  # SUPPLEMENTARY FIGURE 4F
   if (produce_plots) {
     pdf(file.path(figuresPath, 'ActLoFenrichment.pdf'), 12,9)
     par(mfrow=c(1,3))
