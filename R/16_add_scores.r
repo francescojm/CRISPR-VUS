@@ -363,7 +363,7 @@ plot_DAM_VEP_summary <- function(allDAMs_with_scores, figuresPath, driver_genes 
   
   VEPs[is.na(VEPs)] <- 0
   
-  # SUPPLEMENTARY FIGURE 19 A-B
+  # SUPPLEMENTARY FIGURES 9AC
   if (produce_plots && sum(VEPs) > 0) {
     pdf(file.path(figuresPath, paste0(prefix, "_VEP_prediction.pdf")), 11, 6)
     pie(VEPs,
@@ -416,7 +416,7 @@ plot_SAM_VEP_summary <- function(allSAMs_with_scores, figuresPath, driver_genes 
   VEPs <- VEPs[c('High impact','Moderate impact','Possible impact','Low impact','Unknown impact')]
   VEPs[is.na(VEPs)] <- 0
   
-  # SUPPLEMENTARY FIGURE 19 C-D
+  # SUPPLEMENTARY FIGURES 9BD
   if (produce_plots && sum(VEPs) > 0) {
     pdf(file.path(figuresPath, paste0(prefix, "_VEP_prediction.pdf")), 11, 6)
     pie(VEPs,
