@@ -1,5 +1,7 @@
 # CRISPR-enhanced assessment of variants of unknown significance nominates oncology therapeutic targets and drug repositioning opportunities
 
+![Image description](images/logo-vus-5.svg)
+
 ## Overview
 
 This repository contains the analysis workflow for the CRISPR-VUS project, a CRISPR enhanced analytical framework that systematically identifies
