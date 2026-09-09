@@ -136,7 +136,7 @@ plot_hit_frequency <- function(hits, driver_genes, figuresPath, produce_plots = 
   
   if (produce_plots) {
     # not assigned figure number 
-    (file.path(figuresPath, "num_tissues_perhit_log."), 5, 5)
+    pdf(file.path(figuresPath, "num_tissues_perhit_log.pdf"), 5, 5)
     print(
       ggplot(df, aes(x = counts.Var1, y = counts.Freq)) +
         geom_bar(stat = "identity") +
@@ -155,7 +155,7 @@ plot_hit_frequency <- function(hits, driver_genes, figuresPath, produce_plots = 
 
   if (produce_plots) {
     # not assigned figure number 
-    (file.path(figuresPath, "num_tissues_perhit_nondrivers_log."), 2, 5)
+    pdf(file.path(figuresPath, "num_tissues_perhit_nondrivers_log.pdf"), 2, 5)
     print(
       ggplot(df2, aes(x = counts.Var1, y = counts.Freq)) +
         geom_bar(stat = "identity") +
@@ -178,7 +178,7 @@ plot_driver_hits_venn <- function(figuresPath, driver_genes, hits, produce_plots
 
   # FIGURE 3A
   if (produce_plots) {
-    (file.path(figuresPath, "Venn_driver_hits."), 5, 5)
+    pdf(file.path(figuresPath, "Venn_driver_hits.pdf"), 5, 5)
     print(ggvenn(
       data = list("Driver genes" = driver_genes, "Hits" = hits),
       text_size = 5, fill_color = c("#F0E442", "#0072B2"), show_percentage = FALSE
@@ -212,7 +212,7 @@ plot_other_driver_venns_and_tests <- function(benchmark, hits, cl_variants, figu
         fisher.test(matrix(c(a, b, c, d), ncol = 2), alternative = "greater")$p.value,
         "\n", sep = "")
     
-    # SUPPLEMENTARY FIGURE 8
+    # SUPPLEMENTARY FIGURE 4A
     if (produce_plots) {
       pdf(file.path(figuresPath, paste0("Venn_driver_", col, ".pdf")), 5, 5)
       print(
@@ -295,7 +295,7 @@ plot_driver_heatmap <- function(figuresPath, summary_drivers_bin, selhits2, prod
   toplot <- toplot[order(rowSums(!is.na(toplot)), decreasing = TRUE),
     order(colSums(!is.na(toplot)), decreasing = TRUE), drop = FALSE]
   
-  # SUPPLEMENTARY FIGURE 11B
+  # SUPPLEMENTARY FIGURE 5B
   if (produce_plots && length(selhits2) > 0) {
     outfile <- file.path(figuresPath, "Drivers_pheat_novelvsknown.pdf")
     
@@ -395,7 +395,7 @@ plot_nondriver_ntissues <- function(figuresPath, summary_nodrivers, produce_plot
                    ntissues = sort(rowSums(summary_nodrivers), decreasing = TRUE))
   df$DAMbg <- factor(df$DAMbg, levels = c(names(sort(rowSums(summary_nodrivers), decreasing = TRUE))))
   
-  # SUPPLEMENTARY FIGURE 11A
+  # SUPPLEMENTARY FIGURE 5A
   if (produce_plots) {
     pdf(file.path(figuresPath, "DAMbgs_unreported_ntiss.pdf"), 12, 4)
     print(
@@ -474,7 +474,7 @@ plot_DAM_summary <- function(figuresPath, allDAMs, incl_cl_annot, produce_plots 
   cat('DAMs are observed in ', length(ucls), ' cell lines (', 100 * length(ucls) / ncell, '%)\n', sep = '')
 
   # Plot histogram of number of DAMs per cell line
-  # SUPPLEMENTARY FIGURE 13A
+  # SUPPLEMENTARY FIGURE 6A
   if (produce_plots) {
     pdf(file.path(figuresPath,'n.DAMs across n. CCLs harbouring them.pdf'),6,6)
     hist(nDAMsPerCCL,100,
@@ -539,7 +539,7 @@ plot_DAM_summary <- function(figuresPath, allDAMs, incl_cl_annot, produce_plots 
   )
   
   # Stacked barplot: each bar is a cancer type, and the stack represents DAM counts across its cell lines
-  # SUPPLEMENTARY FIGURE 13B
+  # SUPPLEMENTARY FIGURE 6B
   if (produce_plots) {
     pdf(file.path(figuresPath,'n.DAMs_across_cell_lines_in_each_ctype.pdf'),15,8)
     par(mar=c(17,4,2,2))
@@ -556,7 +556,7 @@ plot_DAM_summary <- function(figuresPath, allDAMs, incl_cl_annot, produce_plots 
   }
   
   # Percentage of cell lines with DAMs in each cancer type
-  # SUPPLEMENTARY FIGURE 13C
+  # SUPPLEMENTARY FIGURE 6C
   if (produce_plots) {
     pdf(file.path(figuresPath,'perc_cell_lines_with_DAMs_in_each_ctype.pdf'),15,8)
     par(mar=c(17,4,2,2))
