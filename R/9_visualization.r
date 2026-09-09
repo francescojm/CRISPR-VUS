@@ -267,7 +267,7 @@ plot_hits_correlations <- function(allDAMs, totalTestedVariants, incl_cl_annot, 
   percHitsPerCls <- 100*(nhits_across_ctypes[commoncl]/ncellLines_across_ctypes[commoncl]) /
     (ntested_variants_across_ctypes[commoncl]/ncellLines_across_ctypes[commoncl])
 
-  # SUPPLEMENTARY FIGURE 7ABC
+  # SUPPLEMENTARY FIGURE 3BCD
   if (produce_plots && length(commoncl) >= 3) {
     pdf(file.path(figuresPath,'nHits_correlations.pdf'),7,7)
     par(mfrow=c(2,2))
@@ -488,7 +488,7 @@ plot_most_frequent_unreported_DAMbgs <- function(allHits, intogen_drivers, figur
 
   tmp <- mostFreqDAMbgs[which(mostFreqDAMbgs>2)]
   
-  # SUPPLEMENTARY FIGURE 11A
+  # SUPPLEMENTARY FIGURE 5A
   if (produce_plots && length(tmp) > 0) {
     pdf(file.path(figuresPath,'mostFrequentUnreportedDAMbgs.pdf'),12,5)
     barplot(tmp,las=2,border=FALSE,col='orange',
