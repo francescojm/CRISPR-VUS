@@ -59,14 +59,14 @@ crispr-vus/
 |-- config.yaml
 |-- sessionInfo.txt
 |-- R/
-|-- CRISPR-VUS-DataPackage/
+|-- data/
 |   |-- raw/
 |   |-- Robj/
 |   `-- CRISPR_rng_states/
 `-- README.md
 ```
 
-The workflow expects the input files to be located inside the `CRISPR-VUS-DataPackage/` directory, following the structure shown above.
+The workflow expects the input files to be located inside the `data/` directory, following the structure shown above.
 
 ---
 
@@ -98,7 +98,7 @@ With the default configuration, the expected directory structure is:
 
 ```text
 crispr-vus/
-|-- CRISPR-VUS-DataPackage/
+|-- data/
 |   |-- raw/
 |   |-- Robj/
 |   `-- CRISPR_rng_states/
