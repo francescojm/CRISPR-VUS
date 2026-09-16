@@ -5,6 +5,7 @@ library(readr)
 library(readxl)
 suppressPackageStartupMessages(library(rvest))
 
+# [Function not used in the current implementation]
 # Downloads and prepares the latest versions of all required external datasets
 # Specifically:
 # - Downloads and decompresses Sanger gene annotation, model list, and mutation files
