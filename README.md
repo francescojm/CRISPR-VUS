@@ -14,7 +14,7 @@ The analysis workflow is organized in a Jupyter notebook (`CRISPR_VUS.ipynb`), t
 The repository contains:
 
 ```text
-crispr-vus/
+CRISPR-VUS/
 |-- CRISPR_VUS.ipynb
 |-- config.yaml
 |-- sessionInfo.txt
@@ -54,7 +54,7 @@ Download the data archive, called CRISPR-VUS-DataPackage.zip, from Figshare: htt
 After downloading the archive, unzip it in the root directory of the repository. The folder structure should look like this:
 
 ```text
-crispr-vus/
+CRISPR-VUS-main/
 |-- CRISPR_VUS.ipynb
 |-- config.yaml
 |-- sessionInfo.txt
@@ -97,7 +97,7 @@ The `home` path is machine-specific and should be changed when running the workf
 With the default configuration, the expected directory structure is:
 
 ```text
-crispr-vus/
+CRISPR-VUS-main/
 |-- data/
 |   |-- raw/
 |   |-- Robj/
