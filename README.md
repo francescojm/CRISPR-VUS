@@ -159,7 +159,7 @@ For the first complete run, execute sections 1 to 8 in order:
 
 These sections set up the analysis, load and preprocess the data, select tissues, run the main DAM analysis, integrate driver information, run drug-response analyses, and generate the intermediate results used by later sections.
 
-Section 5 is computationally intensive and may take a long time to complete. If the Colab session is interrupted, the section can be safely rerun: completed tissues are skipped automatically, allowing the analysis to resume from the first unfinished tissue. To ensure reproducibility of the empirical p-values and FDR estimates across resumed runs and original results, a precomputed tissue-specific RNG state, provided in the data folder, is loaded before processing each tissue.
+Section 5 is computationally intensive and may take a long time to complete. In the slowest tested configuration, Google Colab connected to a local R runtime, analysing all 36 tissues can take up to approximately 10 days. If the Colab session is interrupted, the section can be safely rerun: completed tissues are skipped automatically, allowing the analysis to resume from the first unfinished tissue. To ensure reproducibility of the empirical p-values across resumed runs and original results, a precomputed tissue-specific RNG state, provided in the data folder, is loaded before processing each tissue.
 
 ### Later runs
 
@@ -207,4 +207,4 @@ Sections 1 to 4 are required at the beginning of every notebook session because 
 
 The workflow was run in Google Colab using a local R runtime connection.
 
-The local runtime used R version 4.6.1. The complete R session information, including package versions, is reported in `sessionInfo.txt`.
+The local runtime used R version 4.6.1. The complete R session information, including package versions, is reported in `sessionInfo.txt`. Installation of the required R packages typically takes approximately 20-30 minutes on a standard desktop computer with a stable internet connection. No non-standard hardware is required.
