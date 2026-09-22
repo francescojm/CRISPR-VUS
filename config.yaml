@@ -1,6 +1,6 @@
 paths:
   home: "/path/to/your/crispr-vus"
-  pathdata: "CRISPR-VUS-DataPackage"
+  pathdata: "data"
   resultPath: "results"
   raw_dir: "raw"
   robj_dir: "Robj"
