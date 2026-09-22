@@ -60,6 +60,7 @@ CRISPR-VUS-main/
 |-- sessionInfo.txt
 |-- R/
 |-- data/
+|   |-- Ciriello/
 |   |-- raw/
 |   |-- Robj/
 |   `-- CRISPR_rng_states/
@@ -99,6 +100,7 @@ With the default configuration, the expected directory structure is:
 ```text
 CRISPR-VUS-main/
 |-- data/
+|   |-- Ciriello/
 |   |-- raw/
 |   |-- Robj/
 |   `-- CRISPR_rng_states/
