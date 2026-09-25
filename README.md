@@ -159,7 +159,7 @@ For the first complete run, execute sections 1 to 8 in order:
 
 These sections set up the analysis, load and preprocess the data, select tissues, run the main DAM analysis, integrate driver information, run drug-response analyses, and generate the intermediate results used by later sections.
 
-Section 5 is computationally intensive and may take a long time to complete. In the slowest tested configuration, Google Colab connected to a local R runtime, analysing all 36 tissues can take up to approximately 10 days. If the Colab session is interrupted, the section can be safely rerun: completed tissues are skipped automatically, allowing the analysis to resume from the first unfinished tissue. To ensure reproducibility of the empirical p-values across resumed runs and original results, a precomputed tissue-specific RNG state, provided in the data folder, is loaded before processing each tissue.
+Section 5 is computationally intensive and may take a long time to complete. In the slowest tested configuration, analysing all 36 tissues may take up to approximately 9 days when run through Google Colab connected to a local R runtime on a MacBook Air with an Apple M3 chip (8-core CPU) and 16 GB of memory. If the Colab session is interrupted, the section can be safely rerun: completed tissues are skipped automatically, allowing the analysis to resume from the first unfinished tissue. To ensure reproducibility of the empirical p-values across resumed runs and original results, a precomputed tissue-specific RNG state, provided in the data folder, is loaded before processing each tissue.
 
 ### Later runs
 
