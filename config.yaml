@@ -38,4 +38,4 @@ robj_files:
   ADaM: "ADaM.RData"
   FiPer_outputs: "FiPer_outputs.RData"
   basal_exp: "basal_exp.RData"
-  ensembl: "ensembe.RData"
+  ensembl: "ensembl.RData"
