@@ -163,7 +163,7 @@ Section 5 is computationally intensive and may take a long time to complete. In 
 
 ### Later runs
 
-After sections 1 to 8 have been completed once and the required intermediate results have been generated, sections 9 to 19 can be run individually.
+After sections 1 to 8 have been completed once and the required intermediate results have been generated, sections 9 to 16 can be run individually.
 
 For later runs, execute sections 1 to 4 first, followed by the section of interest.
 
