@@ -474,9 +474,6 @@ plot_circular_dams <- function(df, figuresPath) {
   Matching <- Matching[ord]; Other <- Other[ord]; IDs <- IDs[ord]; Total <- Total[ord]
   isAknownDriver <- isAknownDriver[ord]
   Tot <- Tot[ord]
-  # not in the original script !!
-  # functionalSymbol <- functionalSymbol[ord]
-  # Inward <- Inward[ord]
 
   n <- length(IDs)
 
