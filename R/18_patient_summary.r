@@ -495,8 +495,8 @@ plot_circular_dams <- function(df, figuresPath) {
 
   pdf(file.path(figuresPath, "circular_plot.pdf"), 14, 14)
 
-  pad <- 1.12
-  op <- par(mar = c(1,1,1,1))
+  pad <- 1.30
+  op <- par(mar = c(2, 2, 2, 2), xpd = NA)
   plot(0, 0, type = "n", asp = 1,
        xlim = c(-r_outer*pad, r_outer*pad),
        ylim = c(-r_outer*pad, r_outer*pad),
